@@ -7,7 +7,7 @@ import { SVC } from '@/lib/solutions';
 const STAGE_TXT = { not_completed: 'مخصصة، غير مستكملة', completed: 'مستكملة، غير مستلمة', received: 'مستلمة' };
 const PAY_TXT = { check: 'شيك التقنين', waiver: 'التنازل', comp: 'الاستكمال', inst: 'الأقساط' };
 const statusOf = (x) => (x.allocated === false ? `غير مخصصة · ${x.on_list ? 'على الكشف' : 'مش على الكشف'} · الشيك ${x.check_paid ? 'مدفوع' : 'مش مدفوع'}` : STAGE_TXT[x.stage] || 'مخصصة');
-const ZONES = { 'القادسية': [1, 8, 9, 10, 12, 17, 20, 22, 23], 'الأمل': [28, 29, 30, 31, 32, 33, 35, 36] };
+const ZONES = { 'القادسية': [8, 9, 10, 12, 17, 20, 22, 23], 'الأمل': [28, 29, 30, 31, 32, 33, 35, 36] };
 const FACADES = ['بحري', 'قبلي', 'شرقي', 'غربي', 'ناصية'];
 const VIEWS = ['شارع رئيسي', 'حديقة', 'خدمات', 'داخلي'];
 const STATE = { pending: 'مستني موافقة', approved: 'منشور', rejected: 'مرفوض', sold: 'اتباع', hidden: 'مخفي' };

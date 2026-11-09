@@ -665,3 +665,47 @@ textarea.inp{min-height:88px;resize:vertical}
 .ri summary{flex-wrap:wrap;row-gap:1px}
 .ri summary b{margin-inline-start:auto}
 @media (max-width:420px){.ri summary{display:grid;grid-template-columns:1fr}.ri summary b{margin:0;padding-inline-start:11px;font-size:12.5px}.rbox{padding:8px}}
+/* ---------- price block v3: إجمالي السعر (right) + ملخص للمراجعة (left), then the tree ---------- */
+.pgrid{grid-template-columns:1fr 1fr;align-items:stretch}
+.ptot{display:grid;align-content:start;gap:6px;background:var(--accent-soft);border:1.5px solid var(--accent);border-radius:16px;padding:12px;min-width:0}
+.ptot.pop{animation:pop .35s ease-out}
+.ptot-n{font-family:var(--fd);font-size:21px;color:var(--ink);line-height:1.2}
+.ptot-n small{font-family:var(--font-body);font-size:11px;color:var(--muted)}
+.pform{display:grid;justify-items:center;gap:2px;text-align:center;border-top:1px dashed var(--accent);padding-top:8px}
+.pform div{display:grid;gap:1px}
+.pform span{font-size:11.5px;color:var(--muted)}
+.pform b{font-size:13px;color:var(--ink)}
+.pform i{font-style:normal;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#FFFFFF;display:grid;place-items:center;font-weight:700;font-size:15px;line-height:1}
+/* the tree */
+.ptree{display:flex;flex-direction:column;gap:8px;padding-inline-start:20px;position:relative}
+.ptree .br{position:relative}
+.ptree>.br::before{content:"";position:absolute;inset-inline-start:-14px;top:-8px;width:11px;height:30px;border-inline-start:2px solid var(--line);border-bottom:2px solid var(--line);border-end-start-radius:9px}
+.ptree>.br:not(:last-child)::after{content:"";position:absolute;inset-inline-start:-14px;top:-8px;bottom:-8px;border-inline-start:2px solid var(--line)}
+.br-paid,.br-rem{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px}
+.br-paid{background:#F2F7F4;border-color:#CFE2D7}
+.br-rem{background:#FBF6EA;border-color:#EBDDB8;display:grid;gap:6px}
+.br-h{display:flex;justify-content:space-between;align-items:baseline;gap:6px;flex-wrap:wrap;font-size:13.5px;font-weight:600}
+.br-h small{font-weight:400;font-size:11.5px;color:var(--muted)}
+.br-h b{font-family:var(--fd);font-size:18px;color:var(--rem)}
+.br-s{font-size:11px;color:var(--muted)}
+.items-btn{display:flex;align-items:center;gap:8px;border:1.5px dashed var(--accent);background:var(--surface);border-radius:10px;padding:7px 10px;color:var(--ink);text-align:right}
+.items-btn b{font-size:13px}
+.items-btn small{font-size:11px;color:var(--muted)}
+.chev{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;margin-inline-start:auto;transition:transform .2s;flex:none}
+.items-btn[aria-expanded="true"] .chev,.pi[open]>summary .chev{transform:rotate(180deg)}
+.ptree.sub{padding-inline-start:18px;margin-top:2px;animation:rise .25s ease-out}
+.pi{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.pi summary{list-style:none;display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;font-size:12.5px}
+.pi summary::-webkit-details-marker{display:none}
+.pi-n{font-weight:600;color:var(--ink)}
+.pi-a{margin-inline-start:auto;font-weight:700;white-space:nowrap}
+.pi-a small{font-weight:400;color:var(--muted);font-size:10.5px}
+.pi summary .chev{margin:0;width:14px;height:14px;color:var(--muted)}
+.pi-b{display:grid;gap:4px;padding:0 10px 9px;animation:rise .2s ease-out}
+.pi-r{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding-top:5px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--muted)}
+.pi-r b{color:var(--ink);font-weight:600}
+.pi-b p{margin:0;font-size:11px;color:var(--muted);line-height:1.5}
+.pi-m{display:grid;gap:3px;font-size:11.5px;color:var(--muted)}
+.pi-m input{border:1.5px solid var(--accent);background:#FFFFFF;border-radius:9px;padding:7px 9px;min-height:40px;width:100%;direction:ltr;text-align:right;font-size:14px}
+@media (max-width:360px){.pgrid{grid-template-columns:1fr}}
+.ptree>.br::before,.ptree>.br:not(:last-child)::after{border-color:#CDBB8E}
