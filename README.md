@@ -21,11 +21,13 @@ npm run dev
 
 ### إضافة أدمن
 
-1. من Supabase: Authentication ← Users ← Add user (إيميل وباسورد).
+الدخول على `/admin` برقم الموبايل والباسورد. الرقم بيتحفظ في Supabase على شكل إيميل داخلي: `01xxxxxxxxx@admin.telad.app`.
+
+1. من Supabase: Authentication ← Users ← Add user ← Create new user. الإيميل `رقمك@admin.telad.app` (مثلاً `01024151524@admin.telad.app`)، وباسورد، وعلّم على Auto Confirm User.
 2. من SQL Editor:
 
 ```sql
-insert into public.admins (user_id) select id from auth.users where email = 'الإيميل هنا';
+insert into public.admins (user_id) select id from auth.users where email = '01024151524@admin.telad.app';
 ```
 
 متغيرات البيئة (اختيارية، فيه قيم افتراضية عامة في `lib/supabase.js`):

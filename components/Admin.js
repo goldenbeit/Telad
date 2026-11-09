@@ -14,6 +14,13 @@ const TABS = [
 ];
 const tabOf = (x) => (x.state === 'pending' ? 'pending' : x.state === 'approved' ? 'approved' : 'closed');
 
+// Admins sign in with their mobile number. Supabase stores each admin as an email-style login
+// built from the number (01xxxxxxxxx@admin.telad.app), so no SMS provider is needed.
+const ADMIN_DOMAIN = 'admin.telad.app';
+const toEnDigits = (v) => String(v || '').replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+const normPhone = (v) => { const d = toEnDigits(v).replace(/\D/g, ''); return d.startsWith('20') && d.length === 12 ? '0' + d.slice(2) : d; };
+const phoneOf = (email) => (email || '').endsWith('@' + ADMIN_DOMAIN) ? email.split('@')[0] : email;
+
 function Phone({ value }) {
   if (!value) return <span>—</span>;
   return (
@@ -70,7 +77,7 @@ export default function Admin() {
     return (
       <main className="adm">
         <div className="adm-state">
-          <b>الحساب ده ({session.user.email}) مش مسجّل كأدمن.</b>
+          <b>الحساب ده (<span className="num">{phoneOf(session.user.email)}</span>) مش مسجّل كأدمن.</b>
           <span>لازم يتضاف لجدول admins في Supabase.</span>
           <button className="pb" onClick={() => supabase.auth.signOut()}>خروج</button>
         </div>
@@ -177,22 +184,24 @@ export default function Admin() {
 }
 
 function Login() {
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
   async function submit(e) {
     e.preventDefault();
+    const p = normPhone(phone);
+    if (!/^01[0125]\d{8}$/.test(p)) { setErr('اكتب رقم موبايل مصري صح، زي 01012345678.'); return; }
     setBusy(true); setErr('');
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+    const { error } = await supabase.auth.signInWithPassword({ email: `${p}@${ADMIN_DOMAIN}`, password });
     setBusy(false);
-    if (error) setErr('الإيميل أو الباسورد مش صح.');
+    if (error) setErr('الرقم أو الباسورد مش صح.');
   }
   return (
     <main className="adm">
       <form className="adm-login" onSubmit={submit}>
         <b>دخول الإدارة</b>
-        <div className="field"><label htmlFor="ae">الإيميل</label><input id="ae" type="email" autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} required /></div>
+        <div className="field"><label htmlFor="ae">رقم الموبايل</label><input id="ae" className="num" type="tel" inputMode="tel" autoComplete="username" placeholder="01xxxxxxxxx" value={phone} onChange={(e) => setPhone(e.target.value)} required /></div>
         <div className="field"><label htmlFor="ap">الباسورد</label><input id="ap" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required /></div>
         {err && <p className="err">{err}</p>}
         <button className="pb ink" disabled={busy}>{busy ? 'استنى...' : 'دخول'}</button>
