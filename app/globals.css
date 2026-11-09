@@ -193,6 +193,8 @@ button{cursor:pointer}
 @keyframes swap{from{opacity:.2;transform:translateX(-14px)}}
 .p-f{padding:10px 18px 14px;border-top:1px solid var(--line);display:flex;gap:8px}
 .p-f .btn{flex:1}
+.p-f .wa-ic{flex:none;width:48px;padding:0;color:#1DA851}
+.p-f .wa-ic svg{width:22px;height:22px}
 .hero-box{border-radius:20px;padding:16px;display:grid;gap:8px;background:var(--night);color:var(--night-ink)}
 .hero-box .price{color:var(--night-ink);font-size:32px}
 .hero-box .lbl,.hero-box .bar-l{color:var(--night-muted)}
