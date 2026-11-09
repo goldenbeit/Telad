@@ -709,3 +709,19 @@ textarea.inp{min-height:88px;resize:vertical}
 .pi-m input{border:1.5px solid var(--accent);background:#FFFFFF;border-radius:9px;padding:7px 9px;min-height:40px;width:100%;direction:ltr;text-align:right;font-size:14px}
 @media (max-width:360px){.pgrid{grid-template-columns:1fr}}
 .ptree>.br::before,.ptree>.br:not(:last-child)::after{border-color:#CDBB8E}
+/* ---------- price block v4: plain label + box; review summary at the end ---------- */
+.ptrow{display:flex;align-items:center;gap:10px}
+.ptrow.pop .ptbox{animation:pop .35s ease-out}
+.ptl{display:flex;align-items:center;gap:8px;flex:none}
+.ptl>b{font-size:14px;font-weight:600}
+.pfx{display:grid;justify-items:center;line-height:1.3;font-size:11px;color:var(--muted)}
+.pfx i{font-style:normal;font-weight:700;color:var(--ink);font-size:13px;line-height:1}
+.ptbox{flex:1;min-width:0;display:flex;align-items:baseline;justify-content:flex-end;gap:4px;border:1.5px solid var(--line);background:#FBFAF8;border-radius:12px;padding:10px 12px;min-height:48px;direction:ltr}
+.ptbox .num{font-family:var(--fd);font-size:19px;font-weight:700;color:var(--ink)}
+.ptbox small{font-size:11px;color:var(--muted)}
+.rsum-l{display:grid;border:1.5px solid var(--line);background:#FBFAF8;border-radius:12px;padding:2px 12px}
+.rsum-l div{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.rsum-l div:last-child{border:0}
+.rsum-l span{color:var(--muted)}
+.rsum-l b{font-weight:600;text-align:left}
+.rsum-l small{font-weight:400;color:var(--muted)}
