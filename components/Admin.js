@@ -22,7 +22,7 @@ const normPhone = (v) => { const d = toEn(v).replace(/\D/g, ''); return d.starts
 const phoneOf = (email) => ((email || '').endsWith('@' + ADMIN_DOMAIN) ? email.split('@')[0] : email);
 
 const Ico = {
-  logo: <svg viewBox="0 0 120 112" aria-hidden="true"><g fill="none" stroke="currentColor" strokeWidth="10"><path d="M10 108 L64 46 A26 26 0 0 1 108 64 L108 108" /><path d="M36 108 L76 62" /><path d="M62 108 L84 83" /></g><g fill="currentColor"><path d="M52 6h20l-7 10H45z" /><path d="M80 6h20l-7 10H73z" /></g></svg>,
+  logo: <svg viewBox="0 0 210 200" aria-hidden="true"><defs><clipPath id="tlc"><rect x="0" y="0" width="210" height="196" /></clipPath></defs><g clipPath="url(#tlc)" fill="none" stroke="currentColor" strokeWidth="15"><path d="M12 212 L138 64 A42 42 0 0 1 192 102 L192 212" /><path d="M60 212 L158 97" /><path d="M108 212 L172 137" /></g><g fill="currentColor"><path d="M118 36 L130 22 H158 L146 36 Z" /><path d="M162 36 L174 22 H202 L190 36 Z" /></g></svg>,
   refresh: <svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7" /></svg>,
   out: <svg viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 16l-4-4 4-4M6 12h10" /></svg>,
   search: <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" /><path d="M20 20l-4.2-4.2" /></svg>,
@@ -52,6 +52,28 @@ function Contact({ phone, label }) {
       <span className="num ad-contact-n">{phone}</span>
       <a className="ad-ic" href={`tel:${phone}`} aria-label={`اتصل بـ ${phone}`}>{Ico.phone}</a>
       <a className="ad-ic wa" href={`https://wa.me/2${phone}`} target="_blank" rel="noopener noreferrer" aria-label={`واتساب ${phone}`}>{Ico.wa}</a>
+    </div>
+  );
+}
+
+// The unit photo (public bucket) and the allocation letter (private bucket, opened with a short-lived signed link).
+function Files({ x }) {
+  const [letter, setLetter] = useState('');
+  const [err, setErr] = useState('');
+  const photo = x.photo_path ? supabase.storage.from('listing-photos').getPublicUrl(x.photo_path).data.publicUrl : '';
+  async function openLetter() {
+    setErr('');
+    const { data, error } = await supabase.storage.from('allocation-letters').createSignedUrl(x.letter_path, 600);
+    if (error || !data) { setErr('مقدرناش نفتح الصورة.'); return; }
+    setLetter(data.signedUrl);
+  }
+  return (
+    <div className="ad-files">
+      {photo && <a href={photo} target="_blank" rel="noopener noreferrer" className="ad-thumb"><img src={photo} alt="صورة القطعة" loading="lazy" /><span>صورة القطعة</span></a>}
+      {x.letter_path && (letter
+        ? <a href={letter} target="_blank" rel="noopener noreferrer" className="ad-thumb"><img src={letter} alt="جواب التخصيص" /><span>جواب التخصيص</span></a>
+        : <button className="ad-btn sm ghost" onClick={openLetter}>اعرض جواب التخصيص</button>)}
+      {err && <span className="ad-when">{err}</span>}
     </div>
   );
 }
@@ -225,9 +247,10 @@ export default function Admin() {
                       <span className="ad-when">اتبعت {when(x.created_at)}</span>
                     </div>
                     <Contact phone={x.phone} label={x.owner_name} />
+                    {(x.photo_path || x.letter_path) && <Files x={x} />}
                     <dl className="ad-kv">
                       <dt>السعر الكلي</dt><dd className="num">{money(x.price)} ج.م</dd>
-                      <dt>المطلوب + الأوفر</dt><dd className="num">{money(x.paid)} ج.م</dd>
+                      <dt>المطلوب دفعه (للبائع)</dt><dd className="num">{money(x.paid)} ج.م</dd>
                       <dt>المتبقي</dt><dd className="num r">{money(x.remaining)} ج.م</dd>
                       <dt>الأقساط</dt><dd className="num">{x.inst_left}</dd>
                       <dt>أصل المساحة</dt><dd>{x.area_orig != null ? <><span className="num">{Number(x.area_orig)}</span> م²</> : '—'}</dd>
@@ -323,8 +346,8 @@ function EditSheet({ x, onClose, onSaved }) {
     if (!ZONES[f.zone].includes(Number(f.district))) return setErr('اختار حي من أحياء ' + f.zone + '.');
     if (!(ao > 0) && !(af > 0)) return setErr('اكتب المساحة: أصل المساحة أو بعد التقنين.');
     if (!(price > 0)) return setErr('اكتب السعر الكلي.');
-    if (paid == null || paid < 0) return setErr('اكتب المطلوب دفعه + الأوفر.');
-    if (paid > price) return setErr('المطلوب دفعه + الأوفر أكبر من السعر الكلي.');
+    if (paid == null || paid < 0) return setErr('اكتب المطلوب دفعه.');
+    if (paid > price) return setErr('المطلوب دفعه أكبر من السعر الكلي.');
     if (f.name.trim().length < 2) return setErr('اكتب اسم صاحب القطعة.');
     if (!/^01[0125]\d{8}$/.test(phone)) return setErr('رقم صاحب القطعة مش صح.');
     setSaving(true); setErr('');
@@ -345,7 +368,7 @@ function EditSheet({ x, onClose, onSaved }) {
           <div className="ad-dgrid">{ZONES[f.zone].map((n) => <button key={n} className="num" aria-pressed={Number(f.district) === n} onClick={() => setF((o) => ({ ...o, district: n }))}>{n}</button>)}</div>
           <div className="ad-two">
             <label className="ad-f"><span>السعر الكلي</span><input className="num" inputMode="numeric" value={f.price} onChange={set('price')} /></label>
-            <label className="ad-f"><span>المطلوب + الأوفر</span><input className="num" inputMode="numeric" value={f.paid} onChange={set('paid')} /></label>
+            <label className="ad-f"><span>المطلوب دفعه (للبائع)</span><input className="num" inputMode="numeric" value={f.paid} onChange={set('paid')} /></label>
           </div>
           <div className="ad-two">
             <div className="ad-f"><span>المتبقي (تلقائي)</span><div className={`ad-auto${rem != null && rem < 0 ? ' bad' : ''}`}><span className="num">{rem == null ? '—' : money(rem)}</span></div></div>
