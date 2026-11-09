@@ -18,7 +18,7 @@
 *{box-sizing:border-box}
 html{direction:rtl}
 html,body{background:var(--paper);color:var(--text)}
-body{font-family:var(--f-b);font-size:15px;line-height:1.6;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:var(--f-b);font-size:15px;line-height:1.6;-webkit-tap-highlight-color:transparent}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--white)}
 body.lock{overflow:hidden}
 button,input,select,textarea{font:inherit;color:inherit}
