@@ -615,3 +615,53 @@ textarea.inp{min-height:88px;resize:vertical}
 .ad-files{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .ad-thumb{display:grid;gap:4px;text-decoration:none;color:var(--ink);font-size:12px;font-weight:600;text-align:center}
 .ad-thumb img{width:120px;height:90px;object-fit:cover;border-radius:12px;border:1px solid var(--line);background:var(--bg)}
+
+/* ---------- offer paths: one question at a time ---------- */
+.pq{display:grid;gap:10px;padding:14px 0;border-top:1px dashed var(--line);animation:rise .3s ease-out}
+.pq:first-of-type{border-top:0;padding-top:4px}
+.pq-t{display:flex;align-items:center;gap:8px;font-family:var(--fd);font-weight:700;font-size:15.5px;color:var(--ink)}
+.pq-t i{font-style:normal;width:24px;height:24px;border-radius:50%;background:var(--ink);color:#FFFFFF;display:grid;place-items:center;font-size:12.5px;flex:none}
+.pq-t .opt{font-family:var(--font-body)}
+.pq-h{display:block;margin:0;font-size:12px;color:var(--muted);line-height:1.5}
+.pq-o{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+.pq-o.sm{grid-template-columns:repeat(4,1fr)}
+.popt{display:grid;gap:3px;text-align:right;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:11px 12px;color:var(--ink);transition:border-color .2s,background .2s,transform .15s}
+.popt b{font-family:var(--fd);font-size:15px}
+.popt small{font-size:11.5px;color:var(--muted);line-height:1.45}
+.pq-o.sm .popt{text-align:center;padding:10px 4px}
+.pq-o.sm .popt b{font-size:13px}
+.popt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);animation:pop .3s ease-out}
+.popt:active{transform:scale(.97)}
+.req{font-weight:400;color:var(--rem);font-size:11.5px}
+.pchip{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:12.5px;font-weight:600}
+.pchip button{border:0;background:none;color:var(--paid);font-weight:700;font-size:12.5px;padding:4px}
+/* المتبقي: small expandable items */
+.rbox{display:grid;gap:6px;border:1.5px solid var(--line);background:#FBFAF8;border-radius:12px;padding:10px}
+.rbox-h{display:flex;justify-content:space-between;align-items:baseline;gap:6px;flex-wrap:wrap;font-size:13px;font-weight:600}
+.rbox-h small{display:block;font-weight:400;font-size:11px;color:var(--muted)}
+.rbox-h b{font-family:var(--fd);font-size:16px;color:var(--rem)}
+.rbox-s{font-size:10.5px;color:var(--muted);line-height:1.45}
+.ri{border:1px solid var(--line);background:var(--surface);border-radius:10px;font-size:11.5px}
+.ri summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:6px;padding:7px 9px;cursor:pointer}
+.ri summary::-webkit-details-marker{display:none}
+.ri summary span{display:flex;align-items:center;gap:5px;color:var(--ink);font-weight:600}
+.ri summary span::before{content:"";width:6px;height:6px;border-inline-start:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(-45deg);transition:transform .2s;flex:none}
+.ri[open] summary span::before{transform:rotate(-135deg) translate(-1px,-1px)}
+.ri summary b{font-weight:700;white-space:nowrap}
+.ri-q{color:var(--rem);font-weight:600}
+.ri-d{display:grid;gap:4px;padding:0 9px 8px;animation:rise .2s ease-out}
+.ri-d>div{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;padding-top:4px;border-top:1px dashed var(--line);color:var(--muted);font-size:10.5px}
+.ri-d>div b{color:var(--ink);font-weight:600}
+.ri-d p{margin:0;font-size:10.5px;color:var(--muted);line-height:1.45}
+.ri-m{display:grid;gap:3px;font-size:11px;color:var(--muted)}
+.ri-m input{border:1.5px solid var(--accent);background:#FFFFFF;border-radius:9px;padding:7px 8px;min-height:38px;width:100%;direction:ltr;text-align:right;font-size:14px}
+.ri-u{margin-top:-4px}
+.ri-u summary,.ri-u .ri-d>div{font-size:13px}
+/* unallocated badges */
+.dbadge.ua b{font-size:14px}
+.ad-dist.ua b{font-size:12px}
+.steps i.done{display:block;padding:0;text-align:start}
+/* the right column is narrow on a phone: item name above its amount */
+.ri summary{flex-wrap:wrap;row-gap:1px}
+.ri summary b{margin-inline-start:auto}
+@media (max-width:420px){.ri summary{display:grid;grid-template-columns:1fr}.ri summary b{margin:0;padding-inline-start:11px;font-size:12.5px}.rbox{padding:8px}}

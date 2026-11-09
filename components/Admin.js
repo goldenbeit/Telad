@@ -4,6 +4,9 @@ import { supabase } from '@/lib/supabase';
 import { SVC } from '@/lib/solutions';
 
 /* ---------- constants & helpers ---------- */
+const STAGE_TXT = { not_completed: 'مخصصة، غير مستكملة', completed: 'مستكملة، غير مستلمة', received: 'مستلمة' };
+const PAY_TXT = { check: 'شيك التقنين', waiver: 'التنازل', comp: 'الاستكمال', inst: 'الأقساط' };
+const statusOf = (x) => (x.allocated === false ? `غير مخصصة · ${x.on_list ? 'على الكشف' : 'مش على الكشف'} · الشيك ${x.check_paid ? 'مدفوع' : 'مش مدفوع'}` : STAGE_TXT[x.stage] || 'مخصصة');
 const ZONES = { 'القادسية': [1, 8, 9, 10, 12, 17, 20, 22, 23], 'الأمل': [28, 29, 30, 31, 32, 33, 35, 36] };
 const FACADES = ['بحري', 'قبلي', 'شرقي', 'غربي', 'ناصية'];
 const VIEWS = ['شارع رئيسي', 'حديقة', 'خدمات', 'داخلي'];
@@ -232,7 +235,7 @@ export default function Admin() {
             return (
               <article key={x.id} id={'l-' + x.id} className={`ad-card${isOpen ? ' open' : ''}`}>
                 <button className="ad-sum" onClick={() => setOpen(isOpen ? null : x.id)} aria-expanded={isOpen}>
-                  <span className="ad-dist"><small>الحي</small><b className="num">{x.district}</b></span>
+                  {x.district != null ? <span className="ad-dist"><small>الحي</small><b className="num">{x.district}</b></span> : <span className="ad-dist ua"><small>غير</small><b>مخصصة</b></span>}
                   <span className="ad-sum-m">
                     <span className="ad-sum-t"><span className="num">{money(x.price)}</span> <small>ج.م</small></span>
                     <span className="ad-sum-s">{x.zone} · {area(x) != null ? <><span className="num">{area(x)}</span> م²</> : '—'} · {x.owner_name}</span>
@@ -249,10 +252,12 @@ export default function Admin() {
                     <Contact phone={x.phone} label={x.owner_name} />
                     {(x.photo_path || x.letter_path) && <Files x={x} />}
                     <dl className="ad-kv">
+                      <dt>الحالة</dt><dd>{statusOf(x)}</dd>
                       <dt>السعر الكلي</dt><dd className="num">{money(x.price)} ج.م</dd>
                       <dt>المطلوب دفعه (للبائع)</dt><dd className="num">{money(x.paid)} ج.م</dd>
                       <dt>المتبقي</dt><dd className="num r">{money(x.remaining)} ج.م</dd>
                       <dt>الأقساط</dt><dd className="num">{x.inst_left}</dd>
+                      {(x.pay?.items || []).map((i) => <Fragment key={i.k}><dt>· {PAY_TXT[i.k] || i.k}</dt><dd className="num">{i.amt != null ? money(i.amt) + ' ج.م' : '—'}</dd></Fragment>)}
                       <dt>أصل المساحة</dt><dd>{x.area_orig != null ? <><span className="num">{Number(x.area_orig)}</span> م²</> : '—'}</dd>
                       <dt>بعد التقنين</dt><dd>{x.area_final != null ? <><span className="num">{Number(x.area_final)}</span> م²</> : '—'}</dd>
                       <dt>المجاورة / البلوك / القطعة</dt><dd className="num">{x.neighborhood || '—'} / {x.block || '—'} / {x.plot_number || '—'}</dd>
@@ -324,7 +329,7 @@ export default function Admin() {
 /* ---------- edit sheet ---------- */
 function EditSheet({ x, onClose, onSaved }) {
   const [f, setF] = useState(() => ({
-    zone: x.zone, district: x.district, neighborhood: x.neighborhood ?? '', block: x.block ?? '', plot_number: x.plot_number ?? '',
+    zone: x.zone, district: x.district ?? '', neighborhood: x.neighborhood ?? '', block: x.block ?? '', plot_number: x.plot_number ?? '',
     area_orig: x.area_orig != null ? String(Number(x.area_orig)) : '', area_final: x.area_final != null ? String(Number(x.area_final)) : '',
     facade: x.facade ?? '', view_type: x.view_type ?? '', price: String(Number(x.price)), paid: String(Number(x.paid)),
     inst_left: x.inst_left, description: x.description ?? '', name: x.owner_name ?? '', phone: x.phone ?? '',
@@ -343,7 +348,7 @@ function EditSheet({ x, onClose, onSaved }) {
 
   async function save() {
     const price = num(f.price), paid = num(f.paid), ao = num(f.area_orig), af = num(f.area_final), phone = normPhone(f.phone);
-    if (!ZONES[f.zone].includes(Number(f.district))) return setErr('اختار حي من أحياء ' + f.zone + '.');
+    if (f.district !== '' && !ZONES[f.zone].includes(Number(f.district))) return setErr('اختار حي من أحياء ' + f.zone + '.');
     if (!(ao > 0) && !(af > 0)) return setErr('اكتب المساحة: أصل المساحة أو بعد التقنين.');
     if (!(price > 0)) return setErr('اكتب السعر الكلي.');
     if (paid == null || paid < 0) return setErr('اكتب المطلوب دفعه.');
@@ -351,7 +356,7 @@ function EditSheet({ x, onClose, onSaved }) {
     if (f.name.trim().length < 2) return setErr('اكتب اسم صاحب القطعة.');
     if (!/^01[0125]\d{8}$/.test(phone)) return setErr('رقم صاحب القطعة مش صح.');
     setSaving(true); setErr('');
-    const p = { ...f, district: Number(f.district), inst_left: Number(f.inst_left), price, paid, area_orig: ao, area_final: af, phone, name: f.name.trim() };
+    const p = { ...f, district: f.district === '' ? '' : Number(f.district), inst_left: Number(f.inst_left), price, paid, area_orig: ao, area_final: af, phone, name: f.name.trim() };
     const { error } = await supabase.rpc('admin_update_listing', { p_id: x.id, p });
     setSaving(false);
     if (error) return setErr('مقدرناش نحفظ. راجع البيانات وجرب تاني.');
@@ -364,15 +369,15 @@ function EditSheet({ x, onClose, onSaved }) {
       <div className="ad-panel">
         <div className="ad-panel-h"><b>تعديل {x.code || '#' + x.id}</b><button className="ad-ic" onClick={onClose} aria-label="قفل">{Ico.x}</button></div>
         <div className="ad-panel-b">
-          <div className="ad-seg">{Object.keys(ZONES).map((z) => <button key={z} aria-pressed={f.zone === z} onClick={() => setF((o) => ({ ...o, zone: z, district: o.zone === z ? o.district : ZONES[z][0] }))}>{z}</button>)}</div>
-          <div className="ad-dgrid">{ZONES[f.zone].map((n) => <button key={n} className="num" aria-pressed={Number(f.district) === n} onClick={() => setF((o) => ({ ...o, district: n }))}>{n}</button>)}</div>
+          <div className="ad-seg">{Object.keys(ZONES).map((z) => <button key={z} aria-pressed={f.zone === z} onClick={() => setF((o) => ({ ...o, zone: z, district: o.zone === z || o.district === '' ? o.district : ZONES[z][0] }))}>{z}</button>)}</div>
+          <div className="ad-dgrid"><button aria-pressed={f.district === ''} onClick={() => setF((o) => ({ ...o, district: '' }))}>غير مخصصة</button>{ZONES[f.zone].map((n) => <button key={n} className="num" aria-pressed={Number(f.district) === n} onClick={() => setF((o) => ({ ...o, district: n }))}>{n}</button>)}</div>
           <div className="ad-two">
             <label className="ad-f"><span>السعر الكلي</span><input className="num" inputMode="numeric" value={f.price} onChange={set('price')} /></label>
             <label className="ad-f"><span>المطلوب دفعه (للبائع)</span><input className="num" inputMode="numeric" value={f.paid} onChange={set('paid')} /></label>
           </div>
           <div className="ad-two">
             <div className="ad-f"><span>المتبقي (تلقائي)</span><div className={`ad-auto${rem != null && rem < 0 ? ' bad' : ''}`}><span className="num">{rem == null ? '—' : money(rem)}</span></div></div>
-            <label className="ad-f"><span>الأقساط المتبقية</span><select value={f.inst_left} onChange={set('inst_left')}>{[1, 2, 3].map((n) => <option key={n} value={n}>{n}</option>)}</select></label>
+            <label className="ad-f"><span>الأقساط المتبقية</span><select value={f.inst_left} onChange={set('inst_left')}>{[0, 1, 2, 3].map((n) => <option key={n} value={n}>{n}</option>)}</select></label>
           </div>
           <div className="ad-two">
             <label className="ad-f"><span>أصل المساحة (م²)</span><input className="num" inputMode="decimal" value={f.area_orig} onChange={set('area_orig')} /></label>
