@@ -537,3 +537,18 @@ textarea.inp{min-height:88px;resize:vertical}
 .why .snote span{font-size:13.5px;color:var(--night-muted)}
 .why .snote .btn{margin-top:6px}
 .why .snote .btn .ln{width:18px;height:18px}
+
+/* ---------- services card: more air, clean separation, first tile never touches the edge ---------- */
+.solcard{padding:20px 18px 18px;gap:12px}
+.solcard .sol-t{font-size:24px}
+.solcard .sol-h{display:flex;align-items:center;gap:8px;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+.solcard .picker{margin-inline:-18px;padding:8px 18px 16px;gap:10px;scroll-padding-inline:18px;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 26px,#000 100%);mask-image:linear-gradient(to right,transparent 0,#000 26px,#000 100%)}
+.solcard .pk{flex-basis:96px;border-radius:20px;border-color:#EDE5D6;padding:12px 6px 10px}
+.solcard .pk[aria-pressed="true"]{transform:translateY(-2px)}
+.solcard .sdetail{margin-top:2px;padding:16px 14px}
+.solcard .soffer{gap:6px}
+.solcard .soffer div{background:var(--surface);border-radius:12px;padding:9px 12px;font-size:13.5px}
+.solcard .sdetail .btn{margin-top:4px}
+.solcard .picker{gap:8px}
+.solcard .pk{flex-basis:84px}
+.solcard .pk .art svg{width:44px;height:44px}
