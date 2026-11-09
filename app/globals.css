@@ -76,6 +76,34 @@ button{cursor:pointer}
 .dgrid-h button[aria-pressed="true"] small{color:var(--on-accent)}
 .dgrid-h button[aria-pressed="true"]::after{background:var(--on-accent)}
 
+/* band + search card (picker "1") */
+.band{background:var(--night);color:var(--night-ink);padding-block:18px 64px;position:relative;overflow:hidden}
+.band::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(246,242,234,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(246,242,234,.06) 1px,transparent 1px);background-size:26px 26px;animation:drift 40s linear infinite;pointer-events:none}
+.band::after{content:"";position:absolute;inset:auto -60px -140px auto;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(240,166,58,.28),rgba(240,166,58,0) 70%);pointer-events:none;animation:glow 6s ease-in-out infinite alternate}
+.band h1{position:relative;font-family:var(--fd);font-weight:800;font-size:clamp(21px,6.4vw,30px);line-height:1.25;margin:0;white-space:nowrap}
+.band h1 em{font-style:normal;color:var(--accent);display:inline-block}
+.band p{position:relative;margin:4px 0 0;font-size:13px;color:var(--night-muted)}
+.intro .band h1 em{animation:stamp .6s .35s cubic-bezier(.3,1.5,.5,1) both}
+.scard{margin:-48px 14px 0;background:var(--surface);border-radius:22px;box-shadow:0 16px 36px rgba(21,33,59,.14);padding:6px 0 14px;position:relative;z-index:1}
+.intro .scard{animation:rise .55s .1s cubic-bezier(.2,.75,.2,1) both}
+.ztabs{display:grid;grid-template-columns:1fr 1fr;position:relative;border-bottom:1px solid var(--line)}
+.ztabs button{border:0;background:none;min-height:50px;font-family:var(--fd);font-weight:700;font-size:16px;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:6px;transition:color .2s}
+.ztabs button small{font-family:var(--fb);font-weight:500;font-size:11px;background:#F2EEE6;color:var(--muted);border-radius:99px;padding:0 7px;transition:background .2s,color .2s}
+.ztabs button[aria-pressed="true"]{color:var(--ink)}
+.ztabs button[aria-pressed="true"] small{background:var(--accent-soft);color:var(--paid)}
+.zink{position:absolute;bottom:-1px;height:3px;width:50%;background:var(--accent);border-radius:3px;transition:right .35s cubic-bezier(.2,.75,.2,1)}
+.pills-l{font-size:12px;color:var(--muted);margin:12px 16px 6px}
+.pills{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;padding:2px 16px 4px}
+.pills::-webkit-scrollbar{display:none}
+.pills button{flex:none;scroll-snap-align:start;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;min-height:46px;min-width:54px;padding:4px 12px;display:grid;line-height:1.15;text-align:center;transition:background .2s,border-color .2s,color .2s,transform .15s}
+.pills b{font-family:var(--fd);font-size:16px}
+.pills small{font-size:10.5px;color:var(--muted)}
+.pills button.has small{color:var(--paid);font-weight:600}
+.pills button.none{color:#9AA0AC}
+.pills button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#FFFFFF;animation:pop .3s ease-out}
+.pills button[aria-pressed="true"] small{color:var(--accent)}
+.pills button:active{transform:scale(.96)}
+
 /* toolbar + list */
 .toolbar{display:flex;align-items:center;gap:8px;padding-block:16px 4px;flex-wrap:wrap}
 .toolbar h2{font-family:var(--fd);font-size:18px;margin:0;margin-inline-end:auto}
