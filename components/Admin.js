@@ -123,9 +123,10 @@ export default function Admin() {
                 <dt>صاحب الإعلان</dt><dd>{x.owner_name}</dd>
                 <dt>التليفون</dt><dd><Phone value={x.phone} /></dd>
                 <dt>البلوك / القطعة</dt><dd className="num">{x.block || '—'} / {x.plot_number || '—'}</dd>
-                <dt>المساحة</dt><dd><span className="num">{Number(x.area_orig)}</span> ← <span className="num">{Number(x.area_final)}</span> م²</dd>
+                <dt>أصل المساحة</dt><dd>{x.area_orig != null ? <><span className="num">{Number(x.area_orig)}</span> م²</> : '—'}</dd>
+                <dt>بعد التقنين</dt><dd>{x.area_final != null ? <><span className="num">{Number(x.area_final)}</span> م²</> : '—'}</dd>
                 <dt>السعر الكلي</dt><dd className="num">{money(x.price)} ج.م</dd>
-                <dt>المطلوب دفعه</dt><dd className="num">{money(x.paid)} ج.م (منه أوفر {money(x.over_amount)})</dd>
+                <dt>المطلوب دفعه + الأوفر</dt><dd className="num">{money(x.paid)} ج.م</dd>
                 <dt>المتبقي</dt><dd className="num">{money(x.remaining)} ج.م · {x.inst_left} أقساط</dd>
                 <dt>الخدمات</dt><dd>{[x.facade, x.view_type].filter(Boolean).join(' · ') || '—'}</dd>
                 {x.description && (<><dt>الوصف</dt><dd>{x.description}</dd></>)}

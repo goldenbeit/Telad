@@ -1,8 +1,8 @@
-import { Noto_Kufi_Arabic, Readex_Pro } from 'next/font/google';
+import { Changa, IBM_Plex_Sans_Arabic } from 'next/font/google';
 import './globals.css';
 
-const display = Noto_Kufi_Arabic({ subsets: ['arabic'], weight: ['600', '800'], variable: '--font-display', display: 'swap' });
-const body = Readex_Pro({ subsets: ['arabic', 'latin'], weight: ['300', '400', '500', '600'], variable: '--font-body', display: 'swap' });
+const display = Changa({ subsets: ['arabic', 'latin'], weight: ['500', '700', '800'], variable: '--font-display', display: 'swap' });
+const body = IBM_Plex_Sans_Arabic({ subsets: ['arabic', 'latin'], weight: ['400', '500', '600', '700'], variable: '--font-body', display: 'swap' });
 
 export const metadata = {
   title: 'تِلاد · أراضي القادسية والأمل',
