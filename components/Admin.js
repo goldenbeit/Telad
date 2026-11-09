@@ -1,6 +1,7 @@
 'use client';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { SVC } from '@/lib/solutions';
 
 /* ---------- constants & helpers ---------- */
 const ZONES = { 'القادسية': [8, 9, 10, 12, 17, 20, 21, 22, 23], 'الأمل': [28, 29, 30, 32, 33, 34, 35, 36] };
@@ -8,7 +9,7 @@ const FACADES = ['بحري', 'قبلي', 'شرقي', 'غربي', 'ناصية'];
 const VIEWS = ['شارع رئيسي', 'حديقة', 'خدمات', 'داخلي'];
 const STATE = { pending: 'مستني موافقة', approved: 'منشور', rejected: 'مرفوض', sold: 'اتباع', hidden: 'مخفي' };
 const REQ_STATE = { new: 'جديد', contacted: 'اتكلمنا', closed: 'اتقفل' };
-const TABS = [['pending', 'مستنية موافقتك'], ['approved', 'منشورة'], ['closed', 'مرفوضة ومتباعة'], ['requests', 'الطلبات']];
+const TABS = [['pending', 'مستنية موافقتك'], ['approved', 'منشورة'], ['closed', 'مرفوضة ومتباعة'], ['requests', 'طلبات القطع'], ['solutions', 'طلبات الحلول']];
 const tabOf = (x) => (x.state === 'pending' ? 'pending' : x.state === 'approved' ? 'approved' : 'closed');
 const money = (n) => Math.round(Number(n || 0)).toLocaleString('en');
 const when = (d) => (d ? new Date(d).toLocaleString('ar-EG', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : '');
@@ -61,6 +62,7 @@ export default function Admin() {
   const [isAdmin, setIsAdmin] = useState(undefined);
   const [listings, setListings] = useState([]);
   const [requests, setRequests] = useState([]);
+  const [svcReqs, setSvcReqs] = useState([]);
   const [tab, setTab] = useState('pending');
   const [q, setQ] = useState('');
   const [open, setOpen] = useState(null);
@@ -78,10 +80,10 @@ export default function Admin() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [l, r] = await Promise.all([supabase.rpc('admin_listings'), supabase.rpc('admin_requests')]);
+    const [l, r, s] = await Promise.all([supabase.rpc('admin_listings'), supabase.rpc('admin_requests'), supabase.rpc('admin_service_requests')]);
     setLoading(false);
-    if (l.error || r.error) { setToast('مقدرناش نحمّل البيانات. حدّث الصفحة.'); return; }
-    setListings(l.data); setRequests(r.data);
+    if (l.error || r.error || s.error) { setToast('مقدرناش نحمّل البيانات. حدّث الصفحة.'); return; }
+    setListings(l.data); setRequests(r.data); setSvcReqs(s.data);
   }, [setToast]);
 
   useEffect(() => {
@@ -94,12 +96,14 @@ export default function Admin() {
     approved: listings.filter((x) => x.state === 'approved').length,
     closed: listings.filter((x) => tabOf(x) === 'closed').length,
     requests: requests.filter((r) => r.state === 'new').length,
-  }), [listings, requests]);
+    solutions: svcReqs.filter((r) => r.state === 'new').length,
+  }), [listings, requests, svcReqs]);
 
   const term = toEn(q).trim().toLowerCase();
   const match = (fields) => !term || fields.some((f) => String(f ?? '').toLowerCase().includes(term));
   const shownListings = listings.filter((x) => tabOf(x) === tab && match([x.code, x.id, x.district, x.owner_name, x.phone, x.zone]));
   const shownRequests = requests.filter((r) => match([r.name, r.phone, r.code, r.l_district, r.district, r.zone]));
+  const shownSvc = svcReqs.filter((r) => match([r.name, r.phone, SVC[r.service]?.n, 'T-' + r.id, ...Object.values(r.answers || {})]));
 
   async function setState(x, state) {
     setBusy(x.id);
@@ -111,6 +115,11 @@ export default function Admin() {
   }
   async function setReq(id, state) {
     const { error } = await supabase.rpc('admin_set_request_state', { p_id: id, p_state: state });
+    if (error) return setToast('محصلش. جرب تاني.');
+    load();
+  }
+  async function setSvc(id, state) {
+    const { error } = await supabase.rpc('admin_set_service_request_state', { p_id: id, p_state: state });
     if (error) return setToast('محصلش. جرب تاني.');
     load();
   }
@@ -171,7 +180,30 @@ export default function Admin() {
       </div>
 
       <section className="ad-list">
-        {tab !== 'requests' && (shownListings.length === 0
+        {tab === 'solutions' && (shownSvc.length === 0
+          ? <p className="ad-empty">{q ? 'مفيش نتايج للبحث ده.' : 'مفيش طلبات حلول لسه.'}</p>
+          : shownSvc.map((r) => (
+            <article key={r.id} className={`ad-card req${r.state === 'new' ? '' : ' done'}`}>
+              <div className="ad-req-h">
+                <b>{SVC[r.service]?.n || r.service}</b>
+                <span className="num ad-when">T-{r.id}</span>
+                <span className={`ad-pill ${r.state === 'new' ? 'pending' : 'approved'}`}>{REQ_STATE[r.state]}</span>
+              </div>
+              <Contact phone={r.phone} label={r.name} />
+              <dl className="ad-kv">
+                {Object.entries(r.answers || {}).map(([k, v]) => <Fragment key={k}><dt>{k}</dt><dd>{v}</dd></Fragment>)}
+                <dt>التواصل</dt><dd>{r.channel}{r.contact_time ? ' · ' + r.contact_time : ''}</dd>
+              </dl>
+              <div className="ad-req-f">
+                <span className="ad-when">{when(r.created_at)}</span>
+                {r.state !== 'contacted' && <button className="ad-btn sm ok" onClick={() => setSvc(r.id, 'contacted')}>اتكلمنا</button>}
+                {r.state !== 'closed' && <button className="ad-btn sm" onClick={() => setSvc(r.id, 'closed')}>اتقفل</button>}
+                {r.state !== 'new' && <button className="ad-btn sm ghost" onClick={() => setSvc(r.id, 'new')}>رجّعه جديد</button>}
+              </div>
+            </article>
+          )))}
+
+        {tab !== 'requests' && tab !== 'solutions' && (shownListings.length === 0
           ? <p className="ad-empty">{q ? 'مفيش نتايج للبحث ده.' : 'مفيش إعلانات هنا.'}</p>
           : shownListings.map((x) => {
             const isOpen = open === x.id;
