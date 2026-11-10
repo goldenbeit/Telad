@@ -256,7 +256,7 @@ export default function Admin() {
                       <dt>السعر الكلي</dt><dd className="num">{money(x.price)} ج.م</dd>
                       <dt>المطلوب دفعه (للبائع)</dt><dd className="num">{money(x.paid)} ج.م</dd>
                       <dt>المتبقي</dt><dd className="num r">{money(x.remaining)} ج.م</dd>
-                      <dt>الأقساط</dt><dd className="num">{x.inst_left}</dd>
+                      <dt>الأقساط</dt><dd className="num">{x.inst_left ?? '—'}</dd>
                       {(x.pay?.items || []).map((i) => <Fragment key={i.k}><dt>· {PAY_TXT[i.k] || i.k}</dt><dd className="num">{i.amt != null ? money(i.amt) + ' ج.م' : '—'}</dd></Fragment>)}
                       <dt>أصل المساحة</dt><dd>{x.area_orig != null ? <><span className="num">{Number(x.area_orig)}</span> م²</> : '—'}</dd>
                       <dt>بعد التقنين</dt><dd>{x.area_final != null ? <><span className="num">{Number(x.area_final)}</span> م²</> : '—'}</dd>
@@ -332,7 +332,7 @@ function EditSheet({ x, onClose, onSaved }) {
     zone: x.zone, district: x.district ?? '', neighborhood: x.neighborhood ?? '', block: x.block ?? '', plot_number: x.plot_number ?? '',
     area_orig: x.area_orig != null ? String(Number(x.area_orig)) : '', area_final: x.area_final != null ? String(Number(x.area_final)) : '',
     facade: x.facade ?? '', view_type: x.view_type ?? '', price: String(Number(x.price)), paid: String(Number(x.paid)),
-    inst_left: x.inst_left, description: x.description ?? '', name: x.owner_name ?? '', phone: x.phone ?? '',
+    inst_left: x.inst_left ?? '', description: x.description ?? '', name: x.owner_name ?? '', phone: x.phone ?? '',
   }));
   const [err, setErr] = useState('');
   const [saving, setSaving] = useState(false);
@@ -356,7 +356,7 @@ function EditSheet({ x, onClose, onSaved }) {
     if (f.name.trim().length < 2) return setErr('اكتب اسم صاحب القطعة.');
     if (!/^01[0125]\d{8}$/.test(phone)) return setErr('رقم صاحب القطعة مش صح.');
     setSaving(true); setErr('');
-    const p = { ...f, district: f.district === '' ? '' : Number(f.district), inst_left: Number(f.inst_left), price, paid, area_orig: ao, area_final: af, phone, name: f.name.trim() };
+    const p = { ...f, district: f.district === '' ? '' : Number(f.district), inst_left: f.inst_left === '' ? '' : Number(f.inst_left), price, paid, area_orig: ao, area_final: af, phone, name: f.name.trim() };
     const { error } = await supabase.rpc('admin_update_listing', { p_id: x.id, p });
     setSaving(false);
     if (error) return setErr('مقدرناش نحفظ. راجع البيانات وجرب تاني.');
@@ -377,7 +377,7 @@ function EditSheet({ x, onClose, onSaved }) {
           </div>
           <div className="ad-two">
             <div className="ad-f"><span>المتبقي (تلقائي)</span><div className={`ad-auto${rem != null && rem < 0 ? ' bad' : ''}`}><span className="num">{rem == null ? '—' : money(rem)}</span></div></div>
-            <label className="ad-f"><span>الأقساط المتبقية</span><select value={f.inst_left} onChange={set('inst_left')}>{[0, 1, 2, 3].map((n) => <option key={n} value={n}>{n}</option>)}</select></label>
+            <label className="ad-f"><span>الأقساط المتبقية</span><select value={f.inst_left} onChange={set('inst_left')}><option value="">مش معروف</option>{[0, 1, 2, 3].map((n) => <option key={n} value={n}>{n}</option>)}</select></label>
           </div>
           <div className="ad-two">
             <label className="ad-f"><span>أصل المساحة (م²)</span><input className="num" inputMode="decimal" value={f.area_orig} onChange={set('area_orig')} /></label>
