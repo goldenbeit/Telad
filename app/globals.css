@@ -780,3 +780,37 @@ textarea.inp{min-height:88px;resize:vertical}
 .isplit .paid-t{background:#EAF4EE;color:var(--paid)}
 .isplit .rem-t{background:#FBF1E2;color:var(--rem)}
 .isplit b{font-size:12.5px;color:var(--ink)}
+/* ---------- grid density (pinch or − / +) ---------- */
+.list.grid2{grid-template-columns:repeat(var(--cols,2),minmax(0,1fr));touch-action:pan-x pan-y}
+.list.grid2.zoomed{animation:zoomIn .28s cubic-bezier(.2,.75,.2,1)}
+@keyframes zoomIn{from{opacity:.4;transform:scale(.97)}to{opacity:1;transform:none}}
+.zoomc{display:flex;flex:none;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.zoomc button{width:38px;min-height:41px;border:0;background:none;font-family:var(--fd);font-weight:700;font-size:20px;color:var(--ink);line-height:1}
+.zoomc button+button{border-inline-start:1.5px solid var(--line)}
+.zoomc button:disabled{color:#C9C3B8}
+.lv-sort span{white-space:nowrap}
+/* 1 per row: roomier */
+.list[data-cols="1"] .th-p .price{font-size:22px}
+.list[data-cols="1"] .card.th{padding:14px;gap:9px}
+/* 3 per row: price + area, smaller */
+.list[data-cols="3"]{gap:7px}
+.list[data-cols="3"] .card.th{padding:8px;gap:5px;border-radius:13px}
+.list[data-cols="3"] .th-h{flex-wrap:wrap;row-gap:3px}
+.list[data-cols="3"] .th-d{font-size:9.5px;padding:2px 6px}
+.list[data-cols="3"] .th-d b,.list[data-cols="3"] .th-a b{font-size:13px}
+.list[data-cols="3"] .th-p .price{font-size:13.5px}
+.list[data-cols="3"] .th-p .price small,.list[data-cols="3"] .th-r,.list[data-cols="3"] .th-act .cmpbtn{display:none}
+.list[data-cols="3"] .th-r:not(.r){display:flex;font-size:9.5px}
+.list[data-cols="3"] .th-r b{font-size:10.5px}
+.list[data-cols="3"] .th-act{grid-template-columns:1fr}
+.list[data-cols="3"] .th-act .btn{min-height:32px;font-size:12px;padding:4px}
+/* 4 per row: district, area, price only */
+.list[data-cols="4"]{gap:6px}
+.list[data-cols="4"] .card.th{padding:7px 6px;gap:4px;border-radius:12px}
+.list[data-cols="4"] .th-h{flex-direction:column;align-items:flex-start;gap:2px}
+.list[data-cols="4"] .th-d{font-size:9px;padding:2px 5px}
+.list[data-cols="4"] .th-d b,.list[data-cols="4"] .th-a b{font-size:12px}
+.list[data-cols="4"] .th-a{font-size:9.5px}
+.list[data-cols="4"] .th-p .lbl,.list[data-cols="4"] .th-p .price small,.list[data-cols="4"] .th-r,.list[data-cols="4"] .th-act,.list[data-cols="4"] .bar{display:none}
+.list[data-cols="4"] .th-p .price{font-size:12px}
+.list[data-cols="3"] .th-r span{white-space:nowrap;font-size:9px}
