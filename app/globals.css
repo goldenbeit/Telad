@@ -814,3 +814,11 @@ textarea.inp{min-height:88px;resize:vertical}
 .list[data-cols="4"] .th-p .lbl,.list[data-cols="4"] .th-p .price small,.list[data-cols="4"] .th-r,.list[data-cols="4"] .th-act,.list[data-cols="4"] .bar{display:none}
 .list[data-cols="4"] .th-p .price{font-size:12px}
 .list[data-cols="3"] .th-r span{white-space:nowrap;font-size:9px}
+/* ---------- compare: sorting ---------- */
+.cmp-sort{margin-bottom:10px}
+.cmpt tbody th .cs-h{border:0;background:none;padding:0;color:inherit;font:inherit;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.cs-ar{font-style:normal;font-size:10px;color:var(--accent)}
+.cs-ar.off{color:#B9B2A5}
+.cmpt tr.sorted th{color:var(--ink);font-weight:700}
+.cmpt tr.sorted td{background:#FFFBF2}
+.cmpt tr.sorted td.best{background:var(--accent-soft)}
