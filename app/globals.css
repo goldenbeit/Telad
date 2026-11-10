@@ -727,3 +727,13 @@ textarea.inp{min-height:88px;resize:vertical}
 .rsum-l small{font-weight:400;color:var(--muted)}
 .afwarn{margin:0;padding:9px 11px;border-radius:12px;background:#FDF0EC;border:1.5px solid #E8B4A6;color:#9A3B22;font-size:12.5px;line-height:1.55;animation:rise .25s ease-out}
 .pi-s{display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:12.5px}
+/* ---------- services row: animated scroll arrows ---------- */
+.pkwrap{position:relative;min-width:0}
+.pk-ar{position:absolute;top:calc(50% - 22px);z-index:2;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.94);box-shadow:0 6px 16px rgba(21,33,59,.14);display:grid;place-items:center;color:var(--ink);padding:0}
+.pk-ar[hidden]{display:none}
+.pk-ar svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.pk-ar.l{left:-8px;animation:nudgeL 1.3s ease-in-out infinite}
+.pk-ar.r{right:-8px;animation:nudgeR 1.3s ease-in-out infinite}
+@keyframes nudgeL{0%,100%{transform:translateX(0)}50%{transform:translateX(-5px)}}
+@keyframes nudgeR{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
+@media (prefers-reduced-motion:reduce){.pk-ar.l,.pk-ar.r{animation:none}}
