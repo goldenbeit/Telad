@@ -743,3 +743,40 @@ textarea.inp{min-height:88px;resize:vertical}
 .pkwrap.pl .pk-ar.l{left:6px}
 .pkwrap.pl .pk-ar.r{right:6px}
 .list .more{width:100%;min-height:48px}
+/* ---------- units as thumbnails: 2 per row, pages of 20 ---------- */
+.list.grid2{grid-template-columns:1fr 1fr;gap:10px}
+.card.th{padding:10px;gap:7px;border-radius:16px}
+.th-h{display:flex;align-items:center;justify-content:space-between;gap:6px;border:0;background:none;padding:0;color:inherit;text-align:right}
+.th-d{background:var(--night);color:var(--night-muted);border-radius:9px;padding:3px 8px;font-size:11px;white-space:nowrap}
+.th-d b{font-family:var(--fd);font-size:15px;color:var(--accent)}
+.th-a{font-size:11px;color:var(--muted);white-space:nowrap}
+.th-a b{font-family:var(--fd);font-size:15px;color:var(--ink)}
+.th-p{display:grid;gap:0;border:0;background:none;padding:0;text-align:right;color:inherit}
+.th-p .lbl{font-size:10.5px;color:var(--muted)}
+.th-p .price{font-family:var(--fd);font-size:18px;font-weight:700;line-height:1.25;white-space:nowrap}
+.th-p .price small{font-family:var(--font-body);font-size:10px;font-weight:400;color:var(--muted)}
+.card.th .bar{height:6px}
+.th-r{display:flex;justify-content:space-between;gap:4px;font-size:10.5px;color:var(--muted);margin-top:-2px}
+.th-r b{font-size:12px;color:var(--ink);font-weight:700}
+.th-r.r b{color:var(--rem)}
+.th-act{display:grid;grid-template-columns:1fr auto;gap:6px;margin-top:2px}
+.th-act .btn{min-height:38px;font-size:13px;padding:6px 8px;border-radius:11px}
+.th-act .cmpbtn{min-height:38px;width:38px;padding:0;justify-content:center;border-radius:11px}
+@media (max-width:340px){.th-p .price{font-size:16px}}
+.pager{display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 0 18px}
+.pager button{min-width:40px;height:40px;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;font-family:var(--fd);font-weight:700;font-size:15px;color:var(--ink);display:grid;place-items:center;padding:0 8px}
+.pager button[aria-current="page"]{background:var(--ink);border-color:var(--ink);color:#FFFFFF}
+.pager button:disabled{opacity:.35}
+.pager svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.pager .pg-next svg{transform:scaleX(-1)}
+.pg-gap{color:var(--muted);padding:0 2px}
+/* ---------- month/year pickers + installments split ---------- */
+.mpick{display:grid;grid-template-columns:1.3fr 1fr;gap:6px}
+.mpick select{border:1.5px solid var(--line);background:#FFFFFF;border-radius:9px;padding:6px 8px;min-height:40px;font-size:13px;width:100%}
+.mpick select:focus{outline:none;border-color:var(--accent)}
+.pi-m em{font-style:normal;font-size:10.5px}
+.isplit{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.isplit div{display:grid;gap:1px;border-radius:9px;padding:6px 8px;font-size:11px}
+.isplit .paid-t{background:#EAF4EE;color:var(--paid)}
+.isplit .rem-t{background:#FBF1E2;color:var(--rem)}
+.isplit b{font-size:12.5px;color:var(--ink)}

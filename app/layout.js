@@ -10,7 +10,8 @@ export const metadata = {
   openGraph: { title: 'تِلاد', description: 'أراضي القادسية والأمل في العبور الجديدة', locale: 'ar_EG' },
 };
 
-export const viewport = { width: 'device-width', initialScale: 1, viewportFit: 'cover', themeColor: '#FFFFFF' };
+// Pinch-zoom stays on (some in-app browsers block it unless it is stated).
+export const viewport = { width: 'device-width', initialScale: 1, maximumScale: 5, userScalable: true, viewportFit: 'cover', themeColor: '#FFFFFF' };
 
 export default function RootLayout({ children }) {
   return (
