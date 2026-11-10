@@ -761,7 +761,8 @@ textarea.inp{min-height:88px;resize:vertical}
 .th-r.r b{color:var(--rem)}
 .th-act{display:grid;grid-template-columns:1fr auto;gap:6px;margin-top:2px}
 .th-act .btn{min-height:38px;font-size:13px;padding:6px 8px;border-radius:11px}
-.th-act .cmpbtn{min-height:38px;width:38px;padding:0;justify-content:center;border-radius:11px}
+.th-act .cmpbtn{min-height:38px;padding:0 8px 0 10px;gap:5px;justify-content:center;border-radius:11px;font-family:'Changa',Tahoma,sans-serif;font-weight:700;font-size:13px}
+.th-act .cmpbtn i{width:16px;height:16px}
 @media (max-width:340px){.th-p .price{font-size:16px}}
 .pager{display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;padding:6px 0 18px}
 .pager button{min-width:40px;height:40px;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;font-family:var(--fd);font-weight:700;font-size:15px;color:var(--ink);display:grid;place-items:center;padding:0 8px}
