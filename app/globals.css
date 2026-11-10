@@ -737,3 +737,8 @@ textarea.inp{min-height:88px;resize:vertical}
 @keyframes nudgeL{0%,100%{transform:translateX(0)}50%{transform:translateX(-5px)}}
 @keyframes nudgeR{0%,100%{transform:translateX(0)}50%{transform:translateX(5px)}}
 @media (prefers-reduced-motion:reduce){.pk-ar.l,.pk-ar.r{animation:none}}
+/* districts row: same arrows, inside the card */
+.pkwrap.pl .pk-ar{top:calc(50% - 15px);width:30px;height:30px}
+.pkwrap.pl .pk-ar svg{width:16px;height:16px}
+.pkwrap.pl .pk-ar.l{left:6px}
+.pkwrap.pl .pk-ar.r{right:6px}
