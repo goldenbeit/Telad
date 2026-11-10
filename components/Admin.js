@@ -7,6 +7,15 @@ import { SVC } from '@/lib/solutions';
 const STAGE_TXT = { not_completed: 'مخصصة، غير مستكملة', completed: 'مستكملة، غير مستلمة', received: 'مستلمة' };
 const PAY_TXT = { check: 'شيك التقنين', waiver: 'التنازل', comp: 'الاستكمال', inst: 'الأقساط' };
 const statusOf = (x) => (x.allocated === false ? `غير مخصصة · ${x.on_list ? 'على الكشف' : 'مش على الكشف'} · الشيك ${x.check_paid ? 'مدفوع' : 'مش مدفوع'}` : STAGE_TXT[x.stage] || 'مخصصة');
+// Supabase returns at most 1000 rows per request: read an admin list in pages of 1000.
+async function rpcAll(fn) {
+  const PAGE = 1000, data = [];
+  for (let from = 0; ; from += PAGE) {
+    const r = await supabase.rpc(fn).range(from, from + PAGE - 1);
+    if (r.error) return { data: null, error: r.error };
+    data.push(...(r.data || [])); if (!r.data || r.data.length < PAGE) return { data, error: null };
+  }
+}
 const ZONES = { 'القادسية': [8, 9, 10, 12, 17, 20, 22, 23], 'الأمل': [28, 29, 30, 31, 32, 33, 35, 36] };
 const FACADES = ['بحري', 'قبلي', 'شرقي', 'غربي', 'ناصية'];
 const VIEWS = ['شارع رئيسي', 'حديقة', 'خدمات', 'داخلي'];
@@ -105,7 +114,7 @@ export default function Admin() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [l, r, s] = await Promise.all([supabase.rpc('admin_listings'), supabase.rpc('admin_requests'), supabase.rpc('admin_service_requests')]);
+    const [l, r, s] = await Promise.all([rpcAll('admin_listings'), rpcAll('admin_requests'), rpcAll('admin_service_requests')]);
     setLoading(false);
     if (l.error || r.error || s.error) { setToast('مقدرناش نحمّل البيانات. حدّث الصفحة.'); return; }
     setListings(l.data); setRequests(r.data); setSvcReqs(s.data);
