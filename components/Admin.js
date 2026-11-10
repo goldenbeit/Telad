@@ -377,7 +377,7 @@ function EditSheet({ x, onClose, onSaved }) {
           </div>
           <div className="ad-two">
             <div className="ad-f"><span>المتبقي (تلقائي)</span><div className={`ad-auto${rem != null && rem < 0 ? ' bad' : ''}`}><span className="num">{rem == null ? '—' : money(rem)}</span></div></div>
-            <label className="ad-f"><span>الأقساط المتبقية</span><select value={f.inst_left} onChange={set('inst_left')}><option value="">مش معروف</option>{[0, 1, 2, 3].map((n) => <option key={n} value={n}>{n}</option>)}</select></label>
+            <label className="ad-f"><span>الأقساط المتبقية</span><select value={f.inst_left} onChange={set('inst_left')}>{x.inst_left == null && <option value="">مش معروف</option>}{[0, 1, 2, 3].map((n) => <option key={n} value={n}>{n}</option>)}</select></label>
           </div>
           <div className="ad-two">
             <label className="ad-f"><span>أصل المساحة (م²)</span><input className="num" inputMode="decimal" value={f.area_orig} onChange={set('area_orig')} /></label>
