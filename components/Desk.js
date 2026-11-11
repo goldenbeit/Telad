@@ -19,10 +19,13 @@ export default function Desk() {
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
     return () => sub.subscription.unsubscribe();
   }, []);
+  // Re-read the profile only when the signed-in user changes, not on every token refresh,
+  // so the desk is mounted once.
+  const uid = session ? session.user.id : session;
   useEffect(() => {
-    if (!session) { setMe(session === null ? null : undefined); return; }
+    if (!uid) { setMe(uid === null ? null : undefined); return; }
     supabase.rpc('desk_me').then(({ data, error }) => setMe(error ? null : data || null));
-  }, [session]);
+  }, [uid]);
   useEffect(() => {
     if (!me || !host.current) return undefined;
     return mountDesk(supabase, host.current, { ...me }, () => supabase.auth.signOut());
