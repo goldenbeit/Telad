@@ -176,6 +176,7 @@ export default function Admin() {
     return (
       <main className="ad"><header className="ad-head login"><div className="ad-bar"><span className="ad-brand">{Ico.logo}<b>تِلاد</b></span></div><p>لوحة الإدارة</p></header><div className="ad-login">
         <b>الحساب ده (<span className="num">{phoneOf(session.user.email)}</span>) مش مسجّل كأدمن.</b>
+        <a className="ad-btn ok" href="/desk">لو إنت من الفريق: افتح طلبات المشترين</a>
         <button className="ad-btn" onClick={() => supabase.auth.signOut()}>خروج</button>
       </div></main>
     );
@@ -300,6 +301,7 @@ export default function Admin() {
             );
           }))}
 
+        {tab === 'requests' && <a className="ad-card" href="/desk" style={{ display: 'block', textDecoration: 'none', color: 'inherit', borderColor: '#F0A63A' }}><b>طلبات المشترين بقت في صفحة الفريق ←</b><p style={{ margin: '4px 0 0', fontSize: 13 }}>التحويل للمشرفين والسيلز، والمهل، والمراية، والتقارير، وإضافة أعضاء الفريق. الطلبات القديمة تحت للاطلاع.</p></a>}
         {tab === 'requests' && (shownRequests.length === 0
           ? <p className="ad-empty">{q ? 'مفيش نتايج للبحث ده.' : 'مفيش طلبات لسه.'}</p>
           : shownRequests.map((r) => (
