@@ -2,6 +2,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { SVC } from '@/lib/solutions';
+import { DeskView, Login } from '@/components/Desk';
 
 /* ---------- constants & helpers ---------- */
 const STAGE_TXT = { not_completed: 'مخصصة، غير مستكملة', completed: 'مستكملة، غير مستلمة', received: 'مستلمة' };
@@ -94,6 +95,8 @@ function Files({ x }) {
 export default function Admin() {
   const [session, setSession] = useState(undefined);
   const [isAdmin, setIsAdmin] = useState(undefined);
+  const [staffMe, setStaffMe] = useState(undefined);
+  const [view, setView] = useState('listings');
   const [listings, setListings] = useState([]);
   const [requests, setRequests] = useState([]);
   const [svcReqs, setSvcReqs] = useState([]);
@@ -120,10 +123,16 @@ export default function Admin() {
     setListings(l.data); setRequests(r.data); setSvcReqs(s.data);
   }, [setToast]);
 
+  // Who is signed in: the owner gets the full dashboard; a team member gets only their role's part.
+  const uid = session ? session.user.id : session;
   useEffect(() => {
-    if (!session) { setIsAdmin(session === null ? false : undefined); return; }
-    supabase.rpc('is_admin').then(({ data }) => { setIsAdmin(!!data); if (data) load(); });
-  }, [session, load]);
+    if (!uid) { setIsAdmin(uid === null ? false : undefined); setStaffMe(undefined); return; }
+    supabase.rpc('is_admin').then(({ data }) => {
+      setIsAdmin(!!data);
+      if (data) load();
+      else supabase.rpc('desk_me').then(({ data: m, error }) => setStaffMe(error ? null : m || null));
+    });
+  }, [uid, load]);
 
   const counts = useMemo(() => ({
     pending: listings.filter((x) => x.state === 'pending').length,
@@ -170,23 +179,25 @@ export default function Admin() {
     setTimeout(() => document.getElementById('l-' + id)?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 80);
   }
 
-  if (session === undefined || (session && isAdmin === undefined)) return <main className="ad"><p className="ad-empty">بنحمّل...</p></main>;
+  if (session === undefined || (session && (isAdmin === undefined || (isAdmin === false && staffMe === undefined)))) return <main className="ad"><p className="ad-empty">بنحمّل...</p></main>;
   if (!session) return <Login />;
   if (!isAdmin) {
+    if (staffMe) return <DeskView me={staffMe} />;
     return (
       <main className="ad"><header className="ad-head login"><div className="ad-bar"><span className="ad-brand">{Ico.logo}<b>تِلاد</b></span></div><p>لوحة الإدارة</p></header><div className="ad-login">
-        <b>الحساب ده (<span className="num">{phoneOf(session.user.email)}</span>) مش مسجّل كأدمن.</b>
-        <a className="ad-btn ok" href="/desk">لو إنت من الفريق: افتح طلبات المشترين</a>
+        <b>الحساب ده (<span className="num">{phoneOf(session.user.email)}</span>) مش متسجل في الفريق، أو اتوقف.</b>
         <button className="ad-btn" onClick={() => supabase.auth.signOut()}>خروج</button>
       </div></main>
     );
   }
+  if (view === 'desk') return <DeskView me={{ owner: true, role: 'owner', name: 'الأدمن', id: null }} onListings={() => setView('listings')} />;
 
   return (
     <main className="ad">
       <header className="ad-head">
         <div className="ad-bar">
           <span className="ad-brand">{Ico.logo}<b>لوحة الإدارة</b></span>
+          <button className="ad-btn ok" style={{ minHeight: 40, padding: '0 12px', fontSize: 13 }} onClick={() => setView('desk')}>طلبات المشترين والفريق</button>
           <button className={`ad-ic dark${loading ? ' spin' : ''}`} onClick={load} aria-label="تحديث">{Ico.refresh}</button>
           <button className="ad-ic dark" onClick={() => supabase.auth.signOut()} aria-label="خروج">{Ico.out}</button>
         </div>
@@ -301,7 +312,7 @@ export default function Admin() {
             );
           }))}
 
-        {tab === 'requests' && <a className="ad-card" href="/desk" style={{ display: 'block', textDecoration: 'none', color: 'inherit', borderColor: '#F0A63A' }}><b>طلبات المشترين بقت في صفحة الفريق ←</b><p style={{ margin: '4px 0 0', fontSize: 13 }}>التحويل للمشرفين والسيلز، والمهل، والمراية، والتقارير، وإضافة أعضاء الفريق. الطلبات القديمة تحت للاطلاع.</p></a>}
+        {tab === 'requests' && <button className="ad-card" onClick={() => setView('desk')} style={{ display: 'block', width: '100%', textAlign: 'right', color: 'inherit', borderColor: '#F0A63A', font: 'inherit' }}><b>افتح طلبات المشترين والفريق ←</b><p style={{ margin: '4px 0 0', fontSize: 13 }}>التحويل للمشرفين والسيلز، والمهل، والمراية، والتقارير، وإضافة أعضاء الفريق. الطلبات القديمة تحت للاطلاع.</p></button>}
         {tab === 'requests' && (shownRequests.length === 0
           ? <p className="ad-empty">{q ? 'مفيش نتايج للبحث ده.' : 'مفيش طلبات لسه.'}</p>
           : shownRequests.map((r) => (
@@ -414,34 +425,5 @@ function EditSheet({ x, onClose, onSaved }) {
         </div>
       </div>
     </div>
-  );
-}
-
-/* ---------- login ---------- */
-function Login() {
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [err, setErr] = useState('');
-  const [busy, setBusy] = useState(false);
-  async function submit(e) {
-    e.preventDefault();
-    const p = normPhone(phone);
-    if (!/^01[0125]\d{8}$/.test(p)) { setErr('اكتب رقم موبايل مصري صح، زي 01012345678.'); return; }
-    setBusy(true); setErr('');
-    const { error } = await supabase.auth.signInWithPassword({ email: `${p}@${ADMIN_DOMAIN}`, password });
-    setBusy(false);
-    if (error) setErr('الرقم أو الباسورد مش صح.');
-  }
-  return (
-    <main className="ad">
-      <header className="ad-head login"><div className="ad-bar"><span className="ad-brand">{Ico.logo}<b>تِلاد</b></span></div><p>لوحة الإدارة</p></header>
-      <form className="ad-login" onSubmit={submit}>
-        <b>دخول الإدارة</b>
-        <label className="ad-f"><span>رقم الموبايل</span><input className="num" type="tel" inputMode="tel" autoComplete="username" placeholder="01xxxxxxxxx" value={phone} onChange={(e) => setPhone(e.target.value)} required /></label>
-        <label className="ad-f"><span>الباسورد</span><input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required /></label>
-        {err && <p className="ad-err">{err}</p>}
-        <button className="ad-btn ok" disabled={busy}>{busy ? 'استنى...' : 'دخول'}</button>
-      </form>
-    </main>
   );
 }

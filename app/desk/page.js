@@ -1,7 +1,6 @@
-import Desk from '@/components/Desk';
+import { redirect } from 'next/navigation';
 
-export const metadata = { title: 'طلبات المشترين · تِلاد', robots: { index: false } };
-
+// Everything lives in the one dashboard now.
 export default function DeskPage() {
-  return <Desk />;
+  redirect('/admin');
 }

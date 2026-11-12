@@ -3,46 +3,27 @@ import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { mountDesk } from '@/lib/desk-ui';
 
-// Team members sign in with their mobile number, stored in Supabase as 01xxxxxxxxx@admin.telad.app (same as the owner).
+// Everyone signs in from the one dashboard (/admin) with their mobile number,
+// stored in Supabase as 01xxxxxxxxx@admin.telad.app.
 const DOMAIN = 'admin.telad.app';
 const FN_URL = (process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://xvxwvkxashwizafetltl.supabase.co') + '/functions/v1/staff-activate';
 const toEn = (v) => String(v ?? '').replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
 const normPhone = (v) => { const d = toEn(v).replace(/\D/g, ''); return d.startsWith('20') && d.length === 12 ? '0' + d.slice(2) : d; };
 
-export default function Desk() {
-  const [session, setSession] = useState(undefined);
-  const [me, setMe] = useState(undefined);
+// The buyer-requests part of the dashboard. It only shows what the signed-in role may do.
+export function DeskView({ me, onListings }) {
   const host = useRef(null);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
-    return () => sub.subscription.unsubscribe();
-  }, []);
-  // Re-read the profile only when the signed-in user changes, not on every token refresh,
-  // so the desk is mounted once.
-  const uid = session ? session.user.id : session;
-  useEffect(() => {
-    if (!uid) { setMe(uid === null ? null : undefined); return; }
-    supabase.rpc('desk_me').then(({ data, error }) => setMe(error ? null : data || null));
-  }, [uid]);
+  const key = me ? `${me.owner}-${me.id}-${me.role}` : '';
   useEffect(() => {
     if (!me || !host.current) return undefined;
-    return mountDesk(supabase, host.current, { ...me }, () => supabase.auth.signOut());
-  }, [me]);
-
-  if (session === undefined || (session && me === undefined)) return <main className="ad"><p className="ad-empty">بنحمّل...</p></main>;
-  if (!session) return <Login />;
-  if (!me) {
-    return (
-      <main className="ad"><header className="ad-head login"><div className="ad-bar"><span className="ad-brand"><b>تِلاد</b></span></div><p>طلبات المشترين</p></header>
-        <div className="ad-login"><b>الحساب ده مش متسجل في الفريق، أو اتوقف.</b><button className="ad-btn" onClick={() => supabase.auth.signOut()}>خروج</button></div></main>
-    );
-  }
+    return mountDesk(supabase, host.current, { ...me }, () => supabase.auth.signOut(), { onListings });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
   return <div ref={host} />;
 }
 
-function Login() {
+// One sign-in screen for the owner and the team, with first-time activation by invite code.
+export function Login() {
   const [mode, setMode] = useState('in');
   const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');
@@ -52,6 +33,7 @@ function Login() {
   const [busy, setBusy] = useState(false);
   async function submit(e) {
     e.preventDefault();
+    if (busy) return;
     const p = normPhone(phone);
     if (!/^01[0125]\d{8}$/.test(p)) { setErr('اكتب رقم موبايل مصري صح، زي 01012345678.'); return; }
     setErr('');
@@ -75,7 +57,7 @@ function Login() {
   }
   return (
     <main className="ad">
-      <header className="ad-head login"><div className="ad-bar"><span className="ad-brand"><b>تِلاد</b></span></div><p>طلبات المشترين · الفريق</p></header>
+      <header className="ad-head login"><div className="ad-bar"><span className="ad-brand"><b>تِلاد</b></span></div><p>لوحة الإدارة</p></header>
       <form className="ad-login" onSubmit={submit}>
         <div className="ad-chips" role="tablist">
           <button type="button" aria-pressed={mode === 'in'} onClick={() => { setMode('in'); setErr(''); }}>دخول</button>
