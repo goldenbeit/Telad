@@ -67,3 +67,11 @@ end $$;
 revoke execute on function public._can_manage(), public._has_open(bigint), public.staff_delete(bigint) from public, anon, authenticated;
 revoke execute on function public.staff_update(bigint, jsonb), public.staff_new_code(bigint), public.desk_staff() from public, anon;
 grant execute on function public.staff_delete(bigint), public.staff_update(bigint, jsonb), public.staff_new_code(bigint), public.desk_staff() to authenticated;
+
+-- The GM can also add members (applied 2026-11-12 by switching staff_add's owner check to public._can_manage()).
+do $do$
+declare d text := pg_get_functiondef('public.staff_add(jsonb)'::regprocedure); prev text := d;
+begin
+  d := replace(d, $s$if not public.is_admin() then raise exception 'not_owner'$s$, $s$if not public._can_manage() then raise exception 'not_owner'$s$);
+  if d <> prev then execute d; end if;
+end $do$;
