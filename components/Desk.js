@@ -11,12 +11,12 @@ const toEn = (v) => String(v ?? '').replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧
 const normPhone = (v) => { const d = toEn(v).replace(/\D/g, ''); return d.startsWith('20') && d.length === 12 ? '0' + d.slice(2) : d; };
 
 // The buyer-requests part of the dashboard. It only shows what the signed-in role may do.
-export function DeskView({ me, onListings }) {
+export function DeskView({ me, onListings, onActAs }) {
   const host = useRef(null);
-  const key = me ? `${me.owner}-${me.id}-${me.role}` : '';
+  const key = me ? `${me.owner}-${me.id}-${me.role}-${me.acting}` : '';
   useEffect(() => {
     if (!me || !host.current) return undefined;
-    return mountDesk(supabase, host.current, { ...me }, () => supabase.auth.signOut(), { onListings });
+    return mountDesk(supabase, host.current, { ...me }, () => supabase.auth.signOut(), { onListings, onActAs });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
   return <div ref={host} />;

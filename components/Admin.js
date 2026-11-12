@@ -134,6 +134,14 @@ export default function Admin() {
     });
   }, [uid, load]);
 
+  // In the desk the owner can act as any team member (test mode); desk_me says who they are acting as.
+  const [ownerMe, setOwnerMe] = useState(null);
+  const loadOwnerMe = useCallback(async () => {
+    const { data, error } = await supabase.rpc('desk_me');
+    setOwnerMe(error || !data ? { owner: true, role: 'owner', name: 'الأدمن', id: null, can_act: true } : data);
+  }, []);
+  useEffect(() => { if (isAdmin && view === 'desk') loadOwnerMe(); }, [isAdmin, view, loadOwnerMe]);
+
   const counts = useMemo(() => ({
     pending: listings.filter((x) => x.state === 'pending').length,
     approved: listings.filter((x) => x.state === 'approved').length,
@@ -190,7 +198,10 @@ export default function Admin() {
       </div></main>
     );
   }
-  if (view === 'desk') return <DeskView me={{ owner: true, role: 'owner', name: 'الأدمن', id: null }} onListings={() => setView('listings')} />;
+  if (view === 'desk') {
+    if (!ownerMe) return <main className="ad"><p className="ad-empty">بنحمّل...</p></main>;
+    return <DeskView me={ownerMe} onListings={() => setView('listings')} onActAs={loadOwnerMe} />;
+  }
 
   return (
     <main className="ad">
