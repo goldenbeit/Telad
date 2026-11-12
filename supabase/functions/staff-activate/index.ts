@@ -32,8 +32,23 @@ Deno.serve(async (req) => {
     await db.from('staff').update(tries >= 5 ? { code_tries: 0, code_hash: null, code_expires: null } : { code_tries: tries }).eq('id', s.id);
     return reply({ error: tries >= 5 ? 'locked' : 'invalid' }, 400);
   }
-  const { data: u, error } = await db.auth.admin.createUser({ email: `${phone}@${DOMAIN}`, password, email_confirm: true });
-  if (error || !u?.user) return reply({ error: 'exists' }, 409);
-  await db.from('staff').update({ user_id: u.user.id, code_hash: null, code_expires: null, code_tries: 0 }).eq('id', s.id);
+  const email = `${phone}@${DOMAIN}`;
+  let userId: string | null = null;
+  const { data: u, error } = await db.auth.admin.createUser({ email, password, email_confirm: true });
+  if (!error && u?.user) userId = u.user.id;
+  else {
+    // A member who was deleted and added again still has their old login. If it is not linked to anyone
+    // (and is not the owner's), the valid invite code lets them set a new password on it.
+    const { data: list } = await db.auth.admin.listUsers({ page: 1, perPage: 1000 });
+    const old = list?.users?.find((x) => x.email === email);
+    if (!old) return reply({ error: 'exists' }, 409);
+    const { data: linked } = await db.from('staff').select('id').eq('user_id', old.id).maybeSingle();
+    const { data: owner } = await db.from('admins').select('user_id').eq('user_id', old.id).maybeSingle();
+    if (linked || owner) return reply({ error: 'exists' }, 409);
+    const { error: upErr } = await db.auth.admin.updateUserById(old.id, { password });
+    if (upErr) return reply({ error: 'exists' }, 409);
+    userId = old.id;
+  }
+  await db.from('staff').update({ user_id: userId, code_hash: null, code_expires: null, code_tries: 0 }).eq('id', s.id);
   return reply({ ok: true });
 });
