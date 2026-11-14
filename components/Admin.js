@@ -130,7 +130,8 @@ export default function Admin() {
     supabase.rpc('is_admin').then(({ data }) => {
       setIsAdmin(!!data);
       if (data) load();
-      else supabase.rpc('desk_me').then(({ data: m, error }) => setStaffMe(error ? null : m || null));
+      // A super admin also reviews seller listings, so they get the listings dashboard too.
+      else supabase.rpc('desk_me').then(({ data: m, error }) => { setStaffMe(error ? null : m || null); if (m && m.role === 'super') load(); });
     });
   }, [uid, load]);
 
@@ -189,7 +190,8 @@ export default function Admin() {
 
   if (session === undefined || (session && (isAdmin === undefined || (isAdmin === false && staffMe === undefined)))) return <main className="ad"><p className="ad-empty">بنحمّل...</p></main>;
   if (!session) return <Login />;
-  if (!isAdmin) {
+  const isSuper = !isAdmin && !!staffMe && staffMe.role === 'super';
+  if (!isAdmin && !isSuper) {
     if (staffMe) return <DeskView me={staffMe} />;
     return (
       <main className="ad"><header className="ad-head login"><div className="ad-bar"><span className="ad-brand">{Ico.logo}<b>تِلاد</b></span></div><p>لوحة الإدارة</p></header><div className="ad-login">
@@ -199,6 +201,7 @@ export default function Admin() {
     );
   }
   if (view === 'desk') {
+    if (isSuper) return <DeskView me={staffMe} onListings={() => setView('listings')} />;
     if (!ownerMe) return <main className="ad"><p className="ad-empty">بنحمّل...</p></main>;
     return <DeskView me={ownerMe} onListings={() => setView('listings')} onActAs={loadOwnerMe} />;
   }
@@ -308,7 +311,7 @@ export default function Admin() {
                       </>}
                       {tabOf(x) === 'closed' && <button className="ad-btn ok" disabled={busy === x.id} onClick={() => setState(x, 'approved')}>انشرها تاني</button>}
                       <button className="ad-btn ghost" onClick={() => setEdit(x)}>{Ico.edit}تعديل</button>
-                      <button className="ad-btn danger" onClick={() => setConfirmDel(x.id)}>{Ico.trash}حذف</button>
+                      {isAdmin && <button className="ad-btn danger" onClick={() => setConfirmDel(x.id)}>{Ico.trash}حذف</button>}
                     </div>
                     {confirmDel === x.id && (
                       <div className="ad-confirm" role="alert">
