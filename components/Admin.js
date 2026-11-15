@@ -311,7 +311,7 @@ export default function Admin() {
                       </>}
                       {tabOf(x) === 'closed' && <button className="ad-btn ok" disabled={busy === x.id} onClick={() => setState(x, 'approved')}>انشرها تاني</button>}
                       <button className="ad-btn ghost" onClick={() => setEdit(x)}>{Ico.edit}تعديل</button>
-                      {isAdmin && <button className="ad-btn danger" onClick={() => setConfirmDel(x.id)}>{Ico.trash}حذف</button>}
+                      {(isAdmin || isSuper) && <button className="ad-btn danger" onClick={() => setConfirmDel(x.id)}>{Ico.trash}حذف</button>}
                     </div>
                     {confirmDel === x.id && (
                       <div className="ad-confirm" role="alert">
