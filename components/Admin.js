@@ -25,7 +25,15 @@ export default function Admin() {
     else setMe(error ? null : m || null);
   }, []);
   const uid = session ? session.user.id : session;
-  useEffect(() => { if (uid) loadMe(); else setMe(uid === null ? null : undefined); }, [uid, loadMe]);
+  // A new sign-in (also right after activating an account) shows "loading" until we know who it is, never the
+  // "not on the team" message left from the signed-out state. The check runs on the next tick, outside the auth
+  // callback, so it can't get stuck waiting on the sign-in that triggered it.
+  useEffect(() => {
+    if (!uid) { setMe(uid === null ? null : undefined); return undefined; }
+    setMe(undefined);
+    const t = setTimeout(loadMe, 0);
+    return () => clearTimeout(t);
+  }, [uid, loadMe]);
 
   if (session === undefined || (session && me === undefined)) return <main className="ad"><p className="ad-empty">بنحمّل...</p></main>;
   if (!session) return <Login />;
@@ -33,6 +41,7 @@ export default function Admin() {
   return (
     <main className="ad"><header className="ad-head login"><div className="ad-bar"><span className="ad-brand"><b>تِلاد</b></span></div><p>لوحة الإدارة</p></header><div className="ad-login">
       <b>الحساب ده (<span className="num">{phoneOf(session.user.email)}</span>) مش متسجل في الفريق، أو اتوقف.</b>
+      <button className="ad-btn" onClick={() => { setMe(undefined); loadMe(); }}>حاول تاني</button>
       <button className="ad-btn" onClick={() => supabase.auth.signOut()}>خروج</button>
     </div></main>
   );
