@@ -35,7 +35,11 @@ export default function Admin() {
     return () => clearTimeout(t);
   }, [uid, loadMe]);
 
-  if (session === undefined || (session && me === undefined)) return <main className="ad"><p className="ad-empty">بنحمّل...</p></main>;
+  // If loading takes too long, say so and offer a reload instead of "بنحمّل" forever.
+  const loading = session === undefined || (session && me === undefined);
+  const [slow, setSlow] = useState(false);
+  useEffect(() => { setSlow(false); if (!loading) return undefined; const t = setTimeout(() => setSlow(true), 12000); return () => clearTimeout(t); }, [loading]);
+  if (loading) return <main className="ad"><p className="ad-empty">بنحمّل...</p>{slow ? <div className="ad-login"><b>التحميل اتأخر. لو فاتح تِلاد في كذا تاب، اقفلهم وسيب واحد بس.</b><button className="ad-btn" onClick={() => window.location.reload()}>حمّل الصفحة تاني</button></div> : null}</main>;
   if (!session) return <Login />;
   if (me) return <DeskView me={me} onActAs={me.can_act ? loadMe : undefined} />;
   return (
