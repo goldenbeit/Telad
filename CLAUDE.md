@@ -271,7 +271,7 @@
 
 ### الـ migrations
 - **المرجع هو القاعدة الحقيقية، مش الملفات.** كلها اتطبقت بـ`apply_migration` (Supabase MCP) مباشرة، مش `supabase db push`.
-- الريبو فيه 32 ملف والقاعدة فيها 43 (`seller_offers` و`seller_offers_grants` في ملف `20261124_seller_offers.sql`، وآخرها `private_photos_team_check`؛ ملف `20261135_private_photos.sql` = `private_photos` + `private_photos_team_check`؛ ملف `20261132_hold_and_phone2.sql` = `hold_and_phone2` + `hold_old_plots`): ملف واحد في الأيام الأولى كان بيتطبّق على كذا خطوة (مثلًا `20261114_buyer_desk` = 6 migrations في القاعدة). وممكن الملفات القديمة تبقى مختلفة شوية عن اللي اتطبق.
+- الريبو فيه 33 ملف والقاعدة فيها 44 (`seller_offers` و`seller_offers_grants` في ملف `20261124_seller_offers.sql`، وآخرها `fk_indexes`؛ ملف `20261135_private_photos.sql` = `private_photos` + `private_photos_team_check`؛ ملف `20261132_hold_and_phone2.sql` = `hold_and_phone2` + `hold_old_plots`): ملف واحد في الأيام الأولى كان بيتطبّق على كذا خطوة (مثلًا `20261114_buyer_desk` = 6 migrations في القاعدة). وممكن الملفات القديمة تبقى مختلفة شوية عن اللي اتطبق.
 - **ممنوع `supabase db push` أو `reset`.**
 - قبل تعديل أي دالة، اقرا تعريفها من القاعدة: `pg_get_functiondef`.
 - `desk_act` ضخمة (~27 ألف حرف). أي تعديل يبقى **patch**: اقرا التعريف الحالي، و`replace` لنص معين مع تحقق إنه اتلقى **مرة واحدة بالظبط** (وإلا exception)، وبعدين `execute`. الأمثلة في آخر 6 ملفات. **لو كتبتها من ملف قديم هتمسح كل التعديلات اللي بعده.**
