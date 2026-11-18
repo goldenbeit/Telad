@@ -560,6 +560,7 @@ textarea.inp{min-height:88px;resize:vertical}
 .lgl-o{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
 .lgo{display:grid;gap:3px;text-align:right;border:1.5px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 12px;color:var(--ink);transition:border-color .2s,background .2s}
 .lgo b{font-family:var(--fd);font-size:17px}
+.lgl-ed{border:1px solid var(--line);background:var(--surface);border-radius:8px;width:26px;height:26px;margin-inline-start:6px;font-size:13px;line-height:1;color:var(--muted);vertical-align:middle;cursor:pointer}
 .lgo small{font-size:11.5px;color:var(--muted);line-height:1.45}
 .lgo[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);animation:pop .3s ease-out}
 .lgo[aria-pressed="true"] small{color:var(--paid)}
