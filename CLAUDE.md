@@ -263,6 +263,7 @@
 - **الجرس جوه الداشبورد اتجمّع:** نفس النوع ورا بعض = سطر واحد بعدد، وبيتفتح (`noteKey`/`bellgrp`).
 - **أي تنبيه أو دور جديد:** راجع `_push_holds` (لازم يفضل زي `isMine`) و`_push_people`.
 - **متجربش على موبايل حقيقي لحد 19/11:** التوصيل اتجرب لحد ما الرسالة اتشفّرت واتبعتت لعنوان وهمي.
+- **لو التفعيل فشل:** السبب بيتسجل في `push_errors` (الخطوة: permission/register/key/subscribe/save، واسم الخطأ، والمتصفح) عن طريق `push_log_error`، والشاشة بتقول الخطوة. `subscribe` بيتعاد مرة لوحده. 19/11: موبايل د سارة (أندرويد، Chrome) فشل في خطوة الاشتراك بتاعة المتصفح نفسه، وموبايل صاحب المشروع نجح.
 
 ### ✅ مين أونلاين وآخر ظهور (اتنفذ 19/11، migration `20261139_last_seen`)
 - الداشبورد وهو قدام الشخص بيقول "أنا هنا" كل دقيقة (`desk_seen` ← `staff.last_seen`)، وأول ما يفتح، ولما يرجع للصفحة. وضع التجربة مبيسجلش حاجة.
@@ -297,7 +298,7 @@
 
 ### الـ migrations
 - **المرجع هو القاعدة الحقيقية، مش الملفات.** كلها اتطبقت بـ`apply_migration` (Supabase MCP) مباشرة، مش `supabase db push`.
-- الريبو فيه 37 ملف والقاعدة فيها 49 (`seller_offers` و`seller_offers_grants` في ملف `20261124_seller_offers.sql`، وآخرها `linked_accounts`؛ ملف `20261138_push.sql` = `push` + `push_lockdown`؛ ملف `20261135_private_photos.sql` = `private_photos` + `private_photos_team_check`؛ ملف `20261132_hold_and_phone2.sql` = `hold_and_phone2` + `hold_old_plots`): ملف واحد في الأيام الأولى كان بيتطبّق على كذا خطوة (مثلًا `20261114_buyer_desk` = 6 migrations في القاعدة). وممكن الملفات القديمة تبقى مختلفة شوية عن اللي اتطبق.
+- الريبو فيه 38 ملف والقاعدة فيها 50 (`seller_offers` و`seller_offers_grants` في ملف `20261124_seller_offers.sql`، وآخرها `push_errors`؛ ملف `20261138_push.sql` = `push` + `push_lockdown`؛ ملف `20261135_private_photos.sql` = `private_photos` + `private_photos_team_check`؛ ملف `20261132_hold_and_phone2.sql` = `hold_and_phone2` + `hold_old_plots`): ملف واحد في الأيام الأولى كان بيتطبّق على كذا خطوة (مثلًا `20261114_buyer_desk` = 6 migrations في القاعدة). وممكن الملفات القديمة تبقى مختلفة شوية عن اللي اتطبق.
 - **ممنوع `supabase db push` أو `reset`.**
 - قبل تعديل أي دالة، اقرا تعريفها من القاعدة: `pg_get_functiondef`.
 - `desk_act` ضخمة (~27 ألف حرف). أي تعديل يبقى **patch**: اقرا التعريف الحالي، و`replace` لنص معين مع تحقق إنه اتلقى **مرة واحدة بالظبط** (وإلا exception)، وبعدين `execute`. الأمثلة في آخر 6 ملفات. **لو كتبتها من ملف قديم هتمسح كل التعديلات اللي بعده.**
