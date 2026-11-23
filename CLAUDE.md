@@ -267,6 +267,15 @@
 - 16 منهم بيانات ناقصة، و8 فوق النطاق السعري (هيروحوا "مراجعة السعر" أول ما يتعتمدوا).
 - القيد `listings_area_present` بيطلب المساحة أو `missing`، فالقطع اللي من غير مساحة لازم تتعمل بـ`missing` من الأول.
 
+### ✅ رفع شيت Excel من الداشبورد (اتنفذ 23/11، migration `20261146_excel_import`)
+- تبويب **"رفع شيت"** للتيم ليدر فما فوق (`_can_price_review`): "اختار ملف Excel" + "نزّل الشيت الفاضي" (`public/telad-template.xlsx`: ورقة "القطع" بالعناوين وورقة "شرح") + اللي اترفع قبل كده (`desk_imports`).
+- الملف بيتقري **في المتصفح من غير مكتبة** (`lib/xlsx-read.js`: zip + `DecompressionStream` + `DOMParser`، أول ورقة بس). الأعمدة بتتعرف بالاسم (`COLS`)، ونفس أعمدة شيت التصدير بتاعنا. السعر الكلي = المطلوب دفعه + المتبقي، أو "السعر الكلي" لو المتبقي مش موجود. الأعمدة الزيادة (الكود، المستوى، رفعها…) بتتجاهل.
+- **قبل الرفع** (`desk_import_check`): الكامل، والناقص (بنفس قواعد `_listing_missing`)، وفوق النطاق، و"ممكن تكون مكررة" مع قطع عندنا (نفس رقم البائع + رقم القطعة والبلوك، أو نفس المطلوب دفعه والمساحة) أو جوه الشيت نفسه. "متنزّلش المكرر" متعلّمة من الأول.
+- **تنزل فين** (`desk_import(p_rows, p_dest, p_name, p_sales)`، لحد 500 صف): `publish` = منشورة وموثقة (فوق النطاق ← "مراجعة السعر" بالـtrigger، والناقص ← توثيق عند التيم ليدر)، و`tl` = توثيق عند التيم ليدر، و`sales` = توثيق عند السيلز بمهلة 48 ساعة (`batch = 'imp-' || id`؛ عمود "السيلز" في الشيت بالاسم، والباقي للسيلز المختار، ولو مفيش ← التيم ليدر). التلاتة لكل اللي يقدر يرفع (قرار 23/11).
+- **اسم المصدر** إجباري ويظهر في الداشبورد بس: `listing_imports` (مين رفع وامتى والأعداد)، و`listings.import_id`، و"المصدر" في تفاصيل القطعة، والبحث في تبويب القطع.
+- القطع المرفوعة `pay.src = 'import'`، فعدد الأقساط ينفع يبقى فاضي (`listings_inst_left_required`). و"تمام" من التيم ليدر بينشر القطعة المرفوعة المستنية (`desk_act`: `batch is not null or import_id is not null`).
+- الشيت اللي جاي من الوسيط (128 قطعة) صاحب المشروع هيرفعه بنفسه للتجربة.
+
 ### ✅ إلغاء حالة اتعلّمت بالغلط (اتنفذ 18/11، migration `20261134_status_undo`)
 - السيلز الماسك (أو الأدمن والسوبر) وهو في مرحلة `sales` يدوس على الحالة المعلّمة ← تأكيد "تلغي الحالة دي؟" ← `desk_status_undo(p_id, p_key)`.
 - بيمسح خطوة الحالة (`request_legs` kind `s`)، ولو كانت الأخيرة، اللي قبلها بترجع الحالية بمهلتها (والـ`batch` بيفضل على مهلة الـ48 ساعة). وبيتكتب في السجل "لغى الحالة: ...".
@@ -318,7 +327,7 @@
 
 ### الـ migrations
 - **المرجع هو القاعدة الحقيقية، مش الملفات.** كلها اتطبقت بـ`apply_migration` (Supabase MCP) مباشرة، مش `supabase db push`.
-- الريبو فيه 42 ملف والقاعدة فيها 55 (`seller_offers` و`seller_offers_grants` في ملف `20261124_seller_offers.sql`، وآخرها `gm_plots_view`؛ ملف `20261143_price_bands.sql` = `price_bands` + `price_bands_request_unit`؛ ملف `20261138_push.sql` = `push` + `push_lockdown`؛ ملف `20261135_private_photos.sql` = `private_photos` + `private_photos_team_check`؛ ملف `20261132_hold_and_phone2.sql` = `hold_and_phone2` + `hold_old_plots`): ملف واحد في الأيام الأولى كان بيتطبّق على كذا خطوة (مثلًا `20261114_buyer_desk` = 6 migrations في القاعدة). وممكن الملفات القديمة تبقى مختلفة شوية عن اللي اتطبق.
+- الريبو فيه 43 ملف والقاعدة فيها 59 (ملف `20261146_excel_import.sql` = `excel_import` + `excel_import_desc` + `excel_import_owner` + `excel_import_publish`؛ `seller_offers` و`seller_offers_grants` في ملف `20261124_seller_offers.sql`، وقبله `gm_plots_view`؛ ملف `20261143_price_bands.sql` = `price_bands` + `price_bands_request_unit`؛ ملف `20261138_push.sql` = `push` + `push_lockdown`؛ ملف `20261135_private_photos.sql` = `private_photos` + `private_photos_team_check`؛ ملف `20261132_hold_and_phone2.sql` = `hold_and_phone2` + `hold_old_plots`): ملف واحد في الأيام الأولى كان بيتطبّق على كذا خطوة (مثلًا `20261114_buyer_desk` = 6 migrations في القاعدة). وممكن الملفات القديمة تبقى مختلفة شوية عن اللي اتطبق.
 - **ممنوع `supabase db push` أو `reset`.**
 - قبل تعديل أي دالة، اقرا تعريفها من القاعدة: `pg_get_functiondef`.
 - `desk_act` ضخمة (~27 ألف حرف). أي تعديل يبقى **patch**: اقرا التعريف الحالي، و`replace` لنص معين مع تحقق إنه اتلقى **مرة واحدة بالظبط** (وإلا exception)، وبعدين `execute`. الأمثلة في آخر 6 ملفات. **لو كتبتها من ملف قديم هتمسح كل التعديلات اللي بعده.**
