@@ -330,6 +330,13 @@
 - الدوال الكبيرة اللي بتستخدمهم شغالة عادي (security definer). المكشوف للزوار دلوقتي التلات فورمات بس (`submit_offer` و`submit_request` و`submit_service_request`)، وده مقصود.
 - **أي دالة مساعدة جديدة (`_...`):** اقفلها `from public, anon, authenticated` إلا لو قاعدة RLS محتاجاها.
 
+### ✅ حاسبة التقنين (اتنفذ 24/11، migration `20261151_calc_plots`)
+- تبويب **"حاسبة التقنين"** للتيم ليدر فما فوق (`canReview` في الواجهة، و`_can_price_review` في القاعدة). مبتغيّرش أي حاجة في القطع.
+- **الحاسبة:** مخصصة/غير مخصصة، وأصل المساحة، والمطلوب دفعه (اختياري)، والمرحلة (ولو مستلمة: موعد أول قسط ← 3 أقساط سنوية واتدفع كام)، أو الشيك مدفوع ولا لأ لغير المخصصة. بتطلّع الحسبة 12 خطوة، والمتبقي، والسعر الكلي، وسعر المتر. وإنت بتكتب بيتحدّث `#calcout` بس.
+- **المعادلة في `lib/legal-calc.js`** (`calc`): نفس قواعد فورم الموقع، بس الصافي برقمين عشريين (طابقت جدول الجهاز: 150 ← استكمال 40,865.63، و245 ← 3,983.06). فورم الموقع (`legalSize` في `market-ui.js`) لسه بيقرّب لرقم واحد (البند 3 في ملخص 24/11 مستني قرار).
+- **مفتاحين "لحد ما يتحسم"** (قرار 24/11: افتراضي = الحالي): الشيك الأول على أصل المساحة أو المساحة بعد التقنين، والتنازل من غير أو ضيفه. لما صاحب المشروع يقرر، يتشالوا ويتثبت الصح.
+- **مراجعة الأقساط:** `desk_calc_plots()` (القطع المخصصة اللي فيها أصل المساحة، من غير بيانات البائع) ← المسجل جنب المحسوب (القسط، والاستكمال، والمتبقي، والسعر الكلي)، أخضر أقل من 3,000 وأصفر لحد 10,000 وأحمر فوقها، وفلاتر، و"من غير شيت الوسيط" متعلّمة من الأول (`MED_SHEET = 9`). وزرار "راجع الأقساط بالحاسبة" جوه القطعة في تبويب القطع.
+
 ### مشاكل ونواقص معروفة
 - محدش اختبر بحسابات الفريق الحقيقية. الاختبار كله كان rollback وصفحات تجريبية ووضع التجربة.
 - وضع التجربة كسوبر أدمن: الأدمن بيفضل بصلاحيات الأدمن في لوحة الإعلانات والفريق (`is_admin()` بيفضل true).
@@ -350,7 +357,7 @@
 
 ### الـ migrations
 - **المرجع هو القاعدة الحقيقية، مش الملفات.** كلها اتطبقت بـ`apply_migration` (Supabase MCP) مباشرة، مش `supabase db push`.
-- الريبو فيه 47 ملف والقاعدة فيها 64 (آخرها `password_reset_code` = ملف `20261150_password_reset_code.sql`؛ ملف `20261147_plot_map.sql` = `plot_map` + `plot_map_area`؛ ملف `20261146_excel_import.sql` = `excel_import` + `excel_import_desc` + `excel_import_owner` + `excel_import_publish`؛ `seller_offers` و`seller_offers_grants` في ملف `20261124_seller_offers.sql`، وقبله `gm_plots_view`؛ ملف `20261143_price_bands.sql` = `price_bands` + `price_bands_request_unit`؛ ملف `20261138_push.sql` = `push` + `push_lockdown`؛ ملف `20261135_private_photos.sql` = `private_photos` + `private_photos_team_check`؛ ملف `20261132_hold_and_phone2.sql` = `hold_and_phone2` + `hold_old_plots`): ملف واحد في الأيام الأولى كان بيتطبّق على كذا خطوة (مثلًا `20261114_buyer_desk` = 6 migrations في القاعدة). وممكن الملفات القديمة تبقى مختلفة شوية عن اللي اتطبق.
+- الريبو فيه 48 ملف والقاعدة فيها 65 (آخرها `calc_plots` = ملف `20261151_calc_plots.sql`؛ ملف `20261147_plot_map.sql` = `plot_map` + `plot_map_area`؛ ملف `20261146_excel_import.sql` = `excel_import` + `excel_import_desc` + `excel_import_owner` + `excel_import_publish`؛ `seller_offers` و`seller_offers_grants` في ملف `20261124_seller_offers.sql`، وقبله `gm_plots_view`؛ ملف `20261143_price_bands.sql` = `price_bands` + `price_bands_request_unit`؛ ملف `20261138_push.sql` = `push` + `push_lockdown`؛ ملف `20261135_private_photos.sql` = `private_photos` + `private_photos_team_check`؛ ملف `20261132_hold_and_phone2.sql` = `hold_and_phone2` + `hold_old_plots`): ملف واحد في الأيام الأولى كان بيتطبّق على كذا خطوة (مثلًا `20261114_buyer_desk` = 6 migrations في القاعدة). وممكن الملفات القديمة تبقى مختلفة شوية عن اللي اتطبق.
 - **ممنوع `supabase db push` أو `reset`.**
 - قبل تعديل أي دالة، اقرا تعريفها من القاعدة: `pg_get_functiondef`.
 - `desk_act` ضخمة (~27 ألف حرف). أي تعديل يبقى **patch**: اقرا التعريف الحالي، و`replace` لنص معين مع تحقق إنه اتلقى **مرة واحدة بالظبط** (وإلا exception)، وبعدين `execute`. الأمثلة في آخر 6 ملفات. **لو كتبتها من ملف قديم هتمسح كل التعديلات اللي بعده.**
