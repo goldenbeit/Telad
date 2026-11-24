@@ -323,6 +323,11 @@
 - **الإشعارات للحسابين على نفس الموبايل** كل واحد حسب دوره: `push_subs` بقى unique على (endpoint, user_id)، و`push_subscribe` بيسيب الحساب المربوط (`_my_uids`)، و`push_unsubscribe` بيشيل الاتنين. أي إشعار لحساب مربوط بيبدأ بالدور ("سينيور · ...") واللينك فيه `acct=ID` (trigger `push_out_label`)، والداشبورد لو مفتوح بالحساب التاني بيبدّل الأول وبعدين يفتح الطلب.
 - عشان تضيف حد تاني: `alt_id` في الاتجاهين (اسأل صاحب المشروع الأول).
 
+### ✅ قفل 4 دوال مساعدة على الزوار (اتنفذ 24/11، migration `20261149_lock_helpers`)
+- `_acting` و`_can_listings` و`_mgr_blocked` و`_viewer_uid` اتقفلوا على الزوار (`anon` و`public`). التلاتة غير `_can_listings` اتقفلوا على الفريق كمان. `_can_listings` فضلت للفريق، وقاعدة "admins read allocation letters" بقت `to authenticated`.
+- الدوال الكبيرة اللي بتستخدمهم شغالة عادي (security definer). المكشوف للزوار دلوقتي التلات فورمات بس (`submit_offer` و`submit_request` و`submit_service_request`)، وده مقصود.
+- **أي دالة مساعدة جديدة (`_...`):** اقفلها `from public, anon, authenticated` إلا لو قاعدة RLS محتاجاها.
+
 ### مشاكل ونواقص معروفة
 - محدش اختبر بحسابات الفريق الحقيقية. الاختبار كله كان rollback وصفحات تجريبية ووضع التجربة.
 - وضع التجربة كسوبر أدمن: الأدمن بيفضل بصلاحيات الأدمن في لوحة الإعلانات والفريق (`is_admin()` بيفضل true).
@@ -343,7 +348,7 @@
 
 ### الـ migrations
 - **المرجع هو القاعدة الحقيقية، مش الملفات.** كلها اتطبقت بـ`apply_migration` (Supabase MCP) مباشرة، مش `supabase db push`.
-- الريبو فيه 45 ملف والقاعدة فيها 62 (آخرها `plot_svg` = ملف `20261148_plot_svg.sql`؛ ملف `20261147_plot_map.sql` = `plot_map` + `plot_map_area`؛ ملف `20261146_excel_import.sql` = `excel_import` + `excel_import_desc` + `excel_import_owner` + `excel_import_publish`؛ `seller_offers` و`seller_offers_grants` في ملف `20261124_seller_offers.sql`، وقبله `gm_plots_view`؛ ملف `20261143_price_bands.sql` = `price_bands` + `price_bands_request_unit`؛ ملف `20261138_push.sql` = `push` + `push_lockdown`؛ ملف `20261135_private_photos.sql` = `private_photos` + `private_photos_team_check`؛ ملف `20261132_hold_and_phone2.sql` = `hold_and_phone2` + `hold_old_plots`): ملف واحد في الأيام الأولى كان بيتطبّق على كذا خطوة (مثلًا `20261114_buyer_desk` = 6 migrations في القاعدة). وممكن الملفات القديمة تبقى مختلفة شوية عن اللي اتطبق.
+- الريبو فيه 46 ملف والقاعدة فيها 63 (آخرها `lock_helpers` = ملف `20261149_lock_helpers.sql`؛ ملف `20261147_plot_map.sql` = `plot_map` + `plot_map_area`؛ ملف `20261146_excel_import.sql` = `excel_import` + `excel_import_desc` + `excel_import_owner` + `excel_import_publish`؛ `seller_offers` و`seller_offers_grants` في ملف `20261124_seller_offers.sql`، وقبله `gm_plots_view`؛ ملف `20261143_price_bands.sql` = `price_bands` + `price_bands_request_unit`؛ ملف `20261138_push.sql` = `push` + `push_lockdown`؛ ملف `20261135_private_photos.sql` = `private_photos` + `private_photos_team_check`؛ ملف `20261132_hold_and_phone2.sql` = `hold_and_phone2` + `hold_old_plots`): ملف واحد في الأيام الأولى كان بيتطبّق على كذا خطوة (مثلًا `20261114_buyer_desk` = 6 migrations في القاعدة). وممكن الملفات القديمة تبقى مختلفة شوية عن اللي اتطبق.
 - **ممنوع `supabase db push` أو `reset`.**
 - قبل تعديل أي دالة، اقرا تعريفها من القاعدة: `pg_get_functiondef`.
 - `desk_act` ضخمة (~27 ألف حرف). أي تعديل يبقى **patch**: اقرا التعريف الحالي، و`replace` لنص معين مع تحقق إنه اتلقى **مرة واحدة بالظبط** (وإلا exception)، وبعدين `execute`. الأمثلة في آخر 6 ملفات. **لو كتبتها من ملف قديم هتمسح كل التعديلات اللي بعده.**
