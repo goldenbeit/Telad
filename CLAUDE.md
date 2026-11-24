@@ -31,7 +31,8 @@
 - عنوان القايمة: "الحي 8 (القادسية سابقًا)".
 
 **الروابط:**
-- الموقع: https://telad.vercel.app، والداشبورد: https://telad.vercel.app/admin (كل الأدوار من نفس الصفحة).
+- الموقع: **https://www.telad-group.com**، والداشبورد: **https://www.telad-group.com/admin** (كل الأدوار من نفس الصفحة).
+- الدومين `telad-group.com` اتشرى من Vercel يوم 24/11 (تجديد تلقائي شغال، لحد 24/11/2027)؛ `telad-group.com` بيحوّل لـ`www`. العناوين القديمة `telad.vercel.app` و`telad-khaki.vercel.app` بتحوّل 308 على الجديد بنفس المسار (`next.config.mjs`، بالـhost؛ الـpreview ملهوش دعوة). الدخول والإشعارات مربوطين بالعنوان، فالفريق سجّل دخول وفعّل الإشعارات تاني على الجديد. `SITE` في `desk-ui.js` = الجديد. الـVAPID subject في `push-send` لسه القديم (مجرد تعريف، مش بيأثر).
 - الكود: `goldenbeit/Telad` (public)، فرع `main`.
 - Vercel: مشروع `telad` في team "goldenbeit's projects" (`team_SPyXfdTQCrPTrvaJ5tnevqva`، project `prj_mD27Hbu2rw6wticsULynlz0X4GML`). بيتنشر لوحده مع كل push على `main`.
 - Supabase: `xvxwvkxashwizafetltl` (Frankfurt).
