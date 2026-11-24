@@ -1,5 +1,7 @@
 // Activates a team member's account: the owner added them by phone and gave them a 6-digit code.
 // The member sends phone + code + a password they choose; we create their login and link it.
+// An activated member who forgot the password gets a new code the same way (24/11) and sets a new password
+// on the login they already have: their account, work and notifications stay as they are.
 import { createClient } from 'npm:@supabase/supabase-js@2.45.4';
 
 const DOMAIN = 'admin.telad.app';
@@ -26,11 +28,19 @@ Deno.serve(async (req) => {
 
   const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false } });
   const { data: s } = await db.from('staff').select('id, user_id, active, code_hash, code_expires, code_tries').eq('phone', phone).maybeSingle();
-  if (!s || s.user_id || !s.active || !s.code_hash || !s.code_expires || new Date(s.code_expires) < new Date()) return reply({ error: 'invalid' }, 400);
+  if (!s || !s.active || !s.code_hash || !s.code_expires || new Date(s.code_expires) < new Date()) return reply({ error: 'invalid' }, 400);
   if ((await sha256(code)) !== s.code_hash) {
     const tries = (s.code_tries || 0) + 1;
     await db.from('staff').update(tries >= 5 ? { code_tries: 0, code_hash: null, code_expires: null } : { code_tries: tries }).eq('id', s.id);
     return reply({ error: tries >= 5 ? 'locked' : 'invalid' }, 400);
+  }
+  if (s.user_id) {
+    const { data: owner } = await db.from('admins').select('user_id').eq('user_id', s.user_id).maybeSingle();
+    if (owner) return reply({ error: 'invalid' }, 400);
+    const { error: upErr } = await db.auth.admin.updateUserById(s.user_id, { password });
+    if (upErr) return reply({ error: 'invalid' }, 400);
+    await db.from('staff').update({ code_hash: null, code_expires: null, code_tries: 0 }).eq('id', s.id);
+    return reply({ ok: true, reset: true });
   }
   const email = `${phone}@${DOMAIN}`;
   let userId: string | null = null;

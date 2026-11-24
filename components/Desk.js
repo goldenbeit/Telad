@@ -61,7 +61,7 @@ export function Login() {
       <form className="ad-login" onSubmit={submit}>
         <div className="ad-chips" role="tablist">
           <button type="button" aria-pressed={mode === 'in'} onClick={() => { setMode('in'); setErr(''); }}>دخول</button>
-          <button type="button" aria-pressed={mode === 'act'} onClick={() => { setMode('act'); setErr(''); }}>تفعيل حساب جديد</button>
+          <button type="button" aria-pressed={mode === 'act'} onClick={() => { setMode('act'); setErr(''); }}>تفعيل أو باسورد جديد</button>
         </div>
         <label className="ad-f"><span>رقم الموبايل</span><input className="num" type="tel" inputMode="tel" autoComplete="username" placeholder="01xxxxxxxxx" value={phone} onChange={(e) => setPhone(e.target.value)} required /></label>
         {mode === 'act' && <label className="ad-f"><span>كود التفعيل (من الأدمن)</span><input className="num" inputMode="numeric" autoComplete="one-time-code" maxLength={6} value={code} onChange={(e) => setCode(e.target.value)} required /></label>}

@@ -63,6 +63,7 @@
 - العضو: `/admin` ← "تفعيل حساب جديد" ← رقمه + الكود + باسورد ← Edge Function `staff-activate` (`verify_jwt = false`). أقصى 5 محاولات غلط. بتعمل يوزر Auth بإيميل `01xxxxxxxxx@admin.telad.app` وتربطه بـ`staff.user_id`، أو تعيد ربط يوزر موجود ومش مربوط.
 - الدخول: موبايل + باسورد، والرقم بيتحوّل للإيميل الداخلي.
 - الأدمن بيتضاف يدويًا من Supabase بس (يوزر Auth + صف في `admins`، الطريقة في README).
+- **نسي الباسورد (24/11، migration `20261150_password_reset_code`):** نفس زرار "كود جديد" في تفاصيل العضو بقى شغال للي فعّل كمان ("نسي الباسورد؟ كود باسورد جديد")، صالح 24 ساعة. العضو يدوس "تفعيل أو باسورد جديد" ويكتب رقمه والكود وباسورد جديد ← `staff-activate` بتغيّر باسورد نفس اليوزر المربوط (مش بتعمل يوزر جديد)، فالحساب والشغل والتنبيهات زي ما هم. الأدمن مستثنى. مفيش تغيير باسورد بالرقم لوحده (قرار 24/11: خطر).
 
 **دوال الهوية** (كل حاجة بتعدّي عليها): `is_admin()`، و`_me()` (بتحترم وضع التجربة)، و`_role()` (بترجع `owner` للأدمن أو دور العضو اللي بيتقمصه)، و`_actor()`، و`_can_manage()` (أدمن/GM/سوبر)، و`_mgr_blocked()` (تمنع السوبر من GM والسوبر)، و`_can_listings()` (أدمن/سوبر)، و`_can_see(request)`.
 
@@ -349,7 +350,7 @@
 
 ### الـ migrations
 - **المرجع هو القاعدة الحقيقية، مش الملفات.** كلها اتطبقت بـ`apply_migration` (Supabase MCP) مباشرة، مش `supabase db push`.
-- الريبو فيه 46 ملف والقاعدة فيها 63 (آخرها `lock_helpers` = ملف `20261149_lock_helpers.sql`؛ ملف `20261147_plot_map.sql` = `plot_map` + `plot_map_area`؛ ملف `20261146_excel_import.sql` = `excel_import` + `excel_import_desc` + `excel_import_owner` + `excel_import_publish`؛ `seller_offers` و`seller_offers_grants` في ملف `20261124_seller_offers.sql`، وقبله `gm_plots_view`؛ ملف `20261143_price_bands.sql` = `price_bands` + `price_bands_request_unit`؛ ملف `20261138_push.sql` = `push` + `push_lockdown`؛ ملف `20261135_private_photos.sql` = `private_photos` + `private_photos_team_check`؛ ملف `20261132_hold_and_phone2.sql` = `hold_and_phone2` + `hold_old_plots`): ملف واحد في الأيام الأولى كان بيتطبّق على كذا خطوة (مثلًا `20261114_buyer_desk` = 6 migrations في القاعدة). وممكن الملفات القديمة تبقى مختلفة شوية عن اللي اتطبق.
+- الريبو فيه 47 ملف والقاعدة فيها 64 (آخرها `password_reset_code` = ملف `20261150_password_reset_code.sql`؛ ملف `20261147_plot_map.sql` = `plot_map` + `plot_map_area`؛ ملف `20261146_excel_import.sql` = `excel_import` + `excel_import_desc` + `excel_import_owner` + `excel_import_publish`؛ `seller_offers` و`seller_offers_grants` في ملف `20261124_seller_offers.sql`، وقبله `gm_plots_view`؛ ملف `20261143_price_bands.sql` = `price_bands` + `price_bands_request_unit`؛ ملف `20261138_push.sql` = `push` + `push_lockdown`؛ ملف `20261135_private_photos.sql` = `private_photos` + `private_photos_team_check`؛ ملف `20261132_hold_and_phone2.sql` = `hold_and_phone2` + `hold_old_plots`): ملف واحد في الأيام الأولى كان بيتطبّق على كذا خطوة (مثلًا `20261114_buyer_desk` = 6 migrations في القاعدة). وممكن الملفات القديمة تبقى مختلفة شوية عن اللي اتطبق.
 - **ممنوع `supabase db push` أو `reset`.**
 - قبل تعديل أي دالة، اقرا تعريفها من القاعدة: `pg_get_functiondef`.
 - `desk_act` ضخمة (~27 ألف حرف). أي تعديل يبقى **patch**: اقرا التعريف الحالي، و`replace` لنص معين مع تحقق إنه اتلقى **مرة واحدة بالظبط** (وإلا exception)، وبعدين `execute`. الأمثلة في آخر 6 ملفات. **لو كتبتها من ملف قديم هتمسح كل التعديلات اللي بعده.**
