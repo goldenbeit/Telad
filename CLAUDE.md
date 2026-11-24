@@ -36,7 +36,7 @@
 - الدومين `telad-group.com` اتشرى من Vercel يوم 24/11 (تجديد تلقائي شغال، لحد 24/11/2027)؛ `telad-group.com` بيحوّل لـ`www`. العناوين القديمة `telad.vercel.app` و`telad-khaki.vercel.app` بتحوّل 308 على الجديد بنفس المسار (`next.config.mjs`، بالـhost؛ الـpreview ملهوش دعوة). الدخول والإشعارات مربوطين بالعنوان، فالفريق سجّل دخول وفعّل الإشعارات تاني على الجديد. `SITE` في `desk-ui.js` = الجديد. الـVAPID subject في `push-send` لسه القديم (مجرد تعريف، مش بيأثر).
 - الكود: `goldenbeit/Telad` (public)، فرع `main`.
 - Vercel: مشروع `telad` في team "goldenbeit's projects" (`team_SPyXfdTQCrPTrvaJ5tnevqva`، project `prj_mD27Hbu2rw6wticsULynlz0X4GML`). بيتنشر لوحده مع كل push على `main`.
-- Supabase: `xvxwvkxashwizafetltl` (Frankfurt).
+- Supabase: `xvxwvkxashwizafetltl` (Frankfurt)، في organization **"Telad"** (`zxcophsxacenkfhfitnd`). **باقة Pro من 24/11** (25 دولار + 14% ضريبة = 28.5 في الشهر، Spend Cap شغال): نسخة احتياطية كل يوم لمدة 7 أيام، والمشروع مبيقفش. السيرفر لسه Nano، والترقية لـMicro ببلاش بس بتوقف الموقع دقايق (مستنية وقت هادي بموافقته). organization "golden-beit" التانية في نفس الحساب **ملناش علاقة بيها**.
 - نفس حساب Vercel فيه `goldenbeit-front` و`goldenbeit-dashboard`: **ملناش علاقة بيهم، متلمسهمش.**
 
 ## 2) الأدوار والصلاحيات
@@ -334,7 +334,7 @@
 - وضع التجربة كسوبر أدمن: الأدمن بيفضل بصلاحيات الأدمن في لوحة الإعلانات والفريق (`is_admin()` بيفضل true).
 - التأجيل مش بيبعت تنبيه يوم الميعاد، بيتعلّم متأخر بس.
 - في "تغيير وش"، تقييم الإلغاء بيتحسب على آخر سيلز بس.
-- Leaked password protection في Supabase Auth مقفولة، وصاحب المشروع يفعّلها بنفسه.
+- Leaked password protection في Supabase Auth مقفولة، وصاحب المشروع يفعّلها بنفسه (بقت متاحة من 24/11 مع Pro).
 - `README.md` قديم في حتت (الأحياء، وإضافة الأعضاء، والداشبورد).
 - الطلبات القديمة (قبل الداشبورد) في تبويب "طلبات القطع" للاطلاع بس.
 
