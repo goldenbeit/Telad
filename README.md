@@ -37,4 +37,4 @@ NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 
-واتساب تِلاد: 01024151524 (في `lib/market-ui.js`).
+واتساب تِلاد: 01039339939 (في `lib/market-ui.js`).
