@@ -1,6 +1,7 @@
 // llms.txt (25/11): a plain summary of the site for AI assistants, at /llms.txt. Linked from nowhere on the site.
 // Only what the public site already says; the counts and areas come from the published plots and refresh every 5 minutes.
 import { getPlots, ZONES, SITE, WA, fmt } from '@/lib/public-data';
+import { GUIDE, GUIDE_NOTE, guideText } from '@/lib/guide';
 
 export const revalidate = 300;
 
@@ -37,6 +38,10 @@ export async function GET() {
     `- واتساب: +${WA}`,
     '- المشتري يطلب أي قطعة من صفحتها ("اطلبها")، وفريق تِلاد بيكلّمه.',
     '- البائع يعرض قطعته من الموقع ("اعرض قطعتك")، وبتتراجع قبل ما تتنشر.',
+    '',
+    '## دليل التقنين (أسئلة وأجوبة)',
+    ...GUIDE.map((x) => `- ${x.q} ${guideText(x.a)}`),
+    `- ${GUIDE_NOTE}`,
     '',
     '## حلول تِلاد',
     '- الاستثمار العقاري، والتطوير العقاري، والشراكة العقارية، وإدارة الأصول، والتقييم العقاري، والاستشارات العقارية. يُطلب أيٌّ منها من الصفحة الرئيسية للموقع.',

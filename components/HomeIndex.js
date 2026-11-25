@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getPlots, ZONES, SITE, WA, plotPath } from '@/lib/public-data';
 import { PlotRow } from '@/components/PlotBits';
 import { JsonLd } from '@/components/SeoShell';
+import { GUIDE, GUIDE_TITLE, GUIDE_NOTE, guideText } from '@/lib/guide';
 
 export default async function HomeIndex() {
   const plots = await getPlots();
@@ -23,6 +24,11 @@ export default async function HomeIndex() {
             <div className="sx-list">{l.map((p) => <PlotRow key={p.id} p={p} showWhere />)}</div></section>
         );
       })}
+      <JsonLd data={{ '@context': 'https://schema.org', '@type': 'FAQPage', name: GUIDE_TITLE,
+        mainEntity: GUIDE.map((x) => ({ '@type': 'Question', name: x.q, acceptedAnswer: { '@type': 'Answer', text: guideText(x.a) } })) }} />
+      <section className="sx-sec" id="guide-index"><h2>{GUIDE_TITLE}</h2>
+        {GUIDE.map((x, i) => <div key={i}><h3>{x.q}</h3><div dangerouslySetInnerHTML={{ __html: x.a }} /></div>)}
+        <p className="sx-note">{GUIDE_NOTE}</p></section>
     </section>
   );
 }
