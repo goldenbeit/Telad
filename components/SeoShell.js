@@ -1,6 +1,7 @@
 // The frame of the SEO pages (25/11): header, breadcrumb, footer with every area. Server-rendered, no script.
 import Link from 'next/link';
 import { ZONES, SITE, WA, waLink } from '@/lib/public-data';
+import WaTrack from './WaTrack';
 
 export function JsonLd({ data }) {
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }} />;
@@ -29,6 +30,7 @@ export default function SeoShell({ crumbs = [], close, closeLabel, children }) {
         </nav>
       )}
       <main className="sx-main">{children}</main>
+      <WaTrack />
       <footer className="sx-foot">
         {ZONES.map((z) => (
           <div key={z.slug}>
@@ -36,7 +38,7 @@ export default function SeoShell({ crumbs = [], close, closeLabel, children }) {
             <div className="sx-fd">{z.districts.map((d) => <Link key={d} href={`/${z.slug}/${d}`}>الحي {d}</Link>)}<Link href={`/${z.slug}/unallocated`}>غير مخصصة</Link></div>
           </div>
         ))}
-        <div className="sx-fl"><Link href="/">كل القطع على تِلاد</Link><a href={waLink('السلام عليكم، عايز أسأل عن أراضي على تِلاد.')} target="_blank" rel="noopener">واتساب <span dir="ltr">+{WA}</span></a></div>
+        <div className="sx-fl"><Link href="/">كل القطع على تِلاد</Link><a data-wl="general||seo_footer||" href={waLink('السلام عليكم، عايز أسأل عن أراضي على تِلاد.')} target="_blank" rel="noopener">واتساب <span dir="ltr">+{WA}</span></a></div>
       </footer>
     </div>
   );

@@ -56,7 +56,7 @@ export default async function PlotPage({ params }) {
         {p.facade ? <div><dt>الواجهة</dt><dd>{p.facade}</dd></div> : null}
         {p.view ? <div><dt>قدامها</dt><dd>{p.view}</dd></div> : null}
       </dl>
-      <div className="sx-cta"><Link className="sx-btn pri" href={`/?req=${p.code}`}>اطلبها</Link><a className="sx-btn wa" href={waLink(waText)} target="_blank" rel="noopener">واتساب</a></div>
+      <div className="sx-cta"><Link className="sx-btn pri" href={`/?req=${p.code}`}>اطلبها</Link><a className="sx-btn wa" data-wl={`plot|${p.code}|plot_page||`} href={waLink(waText)} target="_blank" rel="noopener">واتساب</a></div>
       <p className="sx-note">الأرقام من البائع، والنهائي في التقنين يحدده جهاز المدينة.</p>
       {near.length > 0 && (
         <section className="sx-sec"><h2>قطع تانية {p.alloc && p.district ? `في الحي ${p.district}` : `غير مخصصة في ${p.zone}`}</h2>

@@ -37,7 +37,7 @@ export default async function DistrictPage({ params }) {
         : 'مفيش قطع منشورة هنا دلوقتي. قولنا بتدوّر على إيه وإحنا ندوّرلك.'}</p>
       {l.length > 0 && <div className="sx-list">{l.map((p) => <PlotRow key={p.id} p={p} />)}</div>}
       <div className="sx-cta"><Link className="sx-btn pri" href={`/?zone=${k.z.slug}&d=${k.d || 'u'}`}>{l.length ? 'قارن وفلتر على الموقع' : 'دوّرلي على قطعة'}</Link>
-        <a className="sx-btn wa" href={waLink(`السلام عليكم، بدوّر على أرض ${k.d ? 'في الحي ' + k.d + ' · ' : 'غير مخصصة في '}${k.z.name}.`)} target="_blank" rel="noopener">واتساب</a></div>
+        <a className="sx-btn wa" data-wl={`district||district_page|${k.z.name}|${k.d || ''}`} href={waLink(`السلام عليكم، بدوّر على أرض ${k.d ? 'في الحي ' + k.d + ' · ' : 'غير مخصصة في '}${k.z.name}.`)} target="_blank" rel="noopener">واتساب</a></div>
     </SeoShell>
   );
 }
