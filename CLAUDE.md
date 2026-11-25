@@ -340,7 +340,8 @@
 ### ✅ Google Analytics (اتنفذ 25/11)
 - GA4 `G-3HWDVQZTQB` (حساب صاحب المشروع، property `telad-group.com`) في `app/page.js` بس (`next/script`)، **مش على `/admin`**.
 - الأحداث من `track()` في `market-ui.js`، من غير أي اسم أو رقم: `view_plot` (الكود، والمنطقة، والحي، ومخصصة، وفيها بطاقة)، و`generate_lead` (`lead_type`: `buy_plot` / `find_plot` / `seller_offer` / `service`)، و`contact_whatsapp`، و`select_zone`، و`select_district`.
-- **الجاي (اتعرض 24/11 ومستني موافقته):** Search Console وBing Webmaster (سجل DNS في Vercel)، وبعدين صفحة لكل قطعة ولكل حي من السيرفر + sitemap + robots + Schema، وبعدين صفحة أسئلة وأجوبة (مسودة يراجعها) و`llms.txt`. الموقع دلوقتي كله بيتبني في المتصفح، فأدوات الذكاء الاصطناعي مش شايفة القطع.
+- **Google Search Console اتحقق 25/11** بسجل TXT `google-site-verification=...` على `telad-group.com` في Vercel DNS. **متمسحش السجل ده** (التحقق بيضيع). Bing: صاحب المشروع يعمل Import من Search Console.
+- **الجاي (اتعرض 24/11 ومستني موافقته):** صفحة لكل قطعة ولكل حي من السيرفر + sitemap + robots + Schema، وبعدين صفحة أسئلة وأجوبة (مسودة يراجعها) و`llms.txt`. الموقع دلوقتي كله بيتبني في المتصفح، فأدوات الذكاء الاصطناعي مش شايفة القطع.
 
 ### مشاكل ونواقص معروفة
 - محدش اختبر بحسابات الفريق الحقيقية. الاختبار كله كان rollback وصفحات تجريبية ووضع التجربة.
