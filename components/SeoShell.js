@@ -11,10 +11,16 @@ export function crumbsLd(items) {
     itemListElement: items.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: SITE + (c.href || '') })) };
 }
 
-export default function SeoShell({ crumbs = [], children }) {
+export default function SeoShell({ crumbs = [], close, closeLabel, children }) {
   return (
     <div className="sx">
       <header className="sx-top"><Link href="/" className="sx-brand">تِلاد</Link><span className="sx-tag">العقار قرارٌ لا صفقةٌ</span></header>
+      {close && (
+        // 25/11: a shared plot link opened on its own still feels part of the site: ✕ goes back to the site itself
+        <div className="sx-close"><Link href={close} className="sx-x" aria-label="اقفل وارجع للموقع">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg></Link>
+          <Link href={close} className="sx-xl">{closeLabel || 'كل القطع على تِلاد'}</Link></div>
+      )}
       {crumbs.length > 0 && (
         <nav className="sx-bc" aria-label="مكانك">
           {crumbs.map((c, i) => (

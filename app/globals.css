@@ -900,3 +900,7 @@ textarea.inp{min-height:88px;resize:vertical}
 .sx-fl{display:flex;flex-wrap:wrap;gap:16px}.sx-fl a{color:var(--ink);font-weight:600}
 .code-row{display:inline-flex;gap:6px;flex-wrap:wrap;align-items:center}
 .share-chip{padding-inline:8px 10px}
+.sx-close{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:10px var(--gr) 10px var(--gl);background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.sx-x{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--bg);color:var(--ink)}
+.sx-x svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.sx-xl{font-weight:700;font-size:14px;color:var(--ink);text-decoration:none}

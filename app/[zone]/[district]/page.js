@@ -27,7 +27,7 @@ export default async function DistrictPage({ params }) {
   const crumbs = [{ name: 'الرئيسية', href: '/' }, { name: k.z.name, href: `/${k.z.slug}` }, { name: label(k.d), href: `/${k.z.slug}/${district}` }];
   const areas = [...new Set(l.map((p) => p.af || p.ao).filter(Boolean))].sort((a, b) => a - b);
   return (
-    <SeoShell crumbs={crumbs}>
+    <SeoShell crumbs={crumbs} close={`/?zone=${k.z.slug}&d=${k.d || 'u'}`} closeLabel={`افتح ${label(k.d)} على الموقع`}>
       <JsonLd data={crumbsLd(crumbs)} />
       {l.length > 0 && <JsonLd data={{ '@context': 'https://schema.org', '@type': 'ItemList', name: `أراضي ${label(k.d)} · ${k.z.name}`, numberOfItems: l.length,
         itemListElement: l.slice(0, 50).map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE + plotPath(p) })) }} />}

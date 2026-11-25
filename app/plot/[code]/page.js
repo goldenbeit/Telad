@@ -38,7 +38,7 @@ export default async function PlotPage({ params }) {
       address: { '@type': 'PostalAddress', addressLocality: 'مدينة العبور الجديدة', streetAddress: `${p.zone}${p.alloc && p.district ? ' · الحي ' + p.district : ''}`, addressCountry: 'EG' } } };
   const waText = `السلام عليكم، أنا مهتم بالقطعة ${p.code} (${where} · ${p.zone}، ${fmt(areaOf(p))} م²، المطلوب دفعه ${fmt(p.paid)} جنيه).`;
   return (
-    <SeoShell crumbs={crumbs}>
+    <SeoShell crumbs={crumbs} close={`/?zone=${zs}&d=${p.alloc && p.district ? p.district : 'u'}`} closeLabel={`كل القطع ${p.alloc && p.district ? 'في الحي ' + p.district : 'غير المخصصة'} على الموقع`}>
       <JsonLd data={ld} /><JsonLd data={crumbsLd(crumbs)} />
       <h1 className="sx-h1">{title}</h1>
       <p className="sx-sub">الكود <span className="num">{p.code}</span> · منشورة على تِلاد</p>

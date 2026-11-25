@@ -24,7 +24,7 @@ export default async function ZonePage({ params }) {
   const crumbs = [{ name: 'الرئيسية', href: '/' }, { name: z.name, href: `/${z.slug}` }];
   const cheap = all.slice().sort((a, b) => a.paid - b.paid).slice(0, 12);
   return (
-    <SeoShell crumbs={crumbs}>
+    <SeoShell crumbs={crumbs} close={`/?zone=${z.slug}`} closeLabel={`افتح ${z.name} على الموقع`}>
       <JsonLd data={crumbsLd(crumbs)} />
       <JsonLd data={{ '@context': 'https://schema.org', '@type': 'ItemList', name: `أراضي ${z.name}`, numberOfItems: all.length,
         itemListElement: cheap.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: SITE + plotPath(p) })) }} />
