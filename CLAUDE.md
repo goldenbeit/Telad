@@ -350,6 +350,7 @@
 - **روابط للموقع:** `/?req=CODE` يفتح "اطلب القطعة"، و`/?plot=CODE` شيت القطعة، و`/?zone=amal&d=28` (أو `d=u`) المنطقة والحي (`deepLink()` في `market-ui.js`، والعنوان بيرجع `/`).
 - `app/sitemap.js` (الرئيسية والمناطق والأحياء اللي فيها قطع وكل قطعة)، و`app/robots.js` (مسموح للكل، ومقفول `/admin` و`/desk`). `metadataBase` = الدومين، وcanonical لكل صفحة، وصورة مشاركة `public/og.png` (1200×630).
 - **Schema (JSON-LD):** `Organization` في الرئيسية، و`RealEstateListing` + `Offer` (EGP) لكل قطعة، و`ItemList` للمناطق والأحياء، و`BreadcrumbList` في الكل.
+- **خريطة الموقع اتبعتت 25/11** لـGoogle Search Console وBing Webmaster (صاحب المشروع بعتها بنفسه، مش عندنا دخول على حساباته). في Bing فيه "AI Performance" بيوري الاستشهاد في Copilot.
 - **الجاي (مستني):** صفحة أسئلة وأجوبة عن التقنين (مسودة يراجعها، من غير اختراع)، و`llms.txt`، ونص مقدمة لكل حي لو صاحب المشروع كتبه.
 
 ### مشاكل ونواقص معروفة
