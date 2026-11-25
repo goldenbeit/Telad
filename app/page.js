@@ -12,6 +12,8 @@ export default function Home() {
     <>
       <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA}`} strategy="afterInteractive" />
       <Script id="ga" strategy="afterInteractive">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','${GA}');`}</Script>
+      {/* hides the crawlable list (HomeIndex) at once in a browser that runs scripts, before it can flash on screen */}
+      <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js-site')" }} />
       <Market />
       <HomeIndex />
     </>
