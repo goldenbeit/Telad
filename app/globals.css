@@ -898,3 +898,5 @@ textarea.inp{min-height:88px;resize:vertical}
 .sx-fz{font-weight:700;color:var(--ink)}
 .sx-fd{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:4px}.sx-fd a{color:var(--muted)}
 .sx-fl{display:flex;flex-wrap:wrap;gap:16px}.sx-fl a{color:var(--ink);font-weight:600}
+.code-row{display:inline-flex;gap:6px;flex-wrap:wrap;align-items:center}
+.share-chip{padding-inline:8px 10px}
