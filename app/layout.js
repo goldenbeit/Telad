@@ -5,9 +5,12 @@ const display = Changa({ subsets: ['arabic', 'latin'], weight: ['500', '700', '8
 const body = IBM_Plex_Sans_Arabic({ subsets: ['arabic', 'latin'], weight: ['400', '500', '600', '700'], variable: '--font-body', display: 'swap' });
 
 export const metadata = {
-  title: 'تِلاد · أراضي القادسية والأمل',
-  description: 'العقار قرارٌ لا صفقةٌ. أراضي القادسية والأمل في العبور الجديدة بالسعر الكلي والمطلوب دفعه والمتبقي.',
-  openGraph: { title: 'تِلاد', description: 'أراضي القادسية والأمل في العبور الجديدة', locale: 'ar_EG' },
+  metadataBase: new URL('https://www.telad-group.com'),
+  title: 'تِلاد · أراضي القادسية والأمل في العبور الجديدة',
+  description: 'العقار قرارٌ لا صفقةٌ. أراضي القادسية والأمل في العبور الجديدة بالسعر الكلي والمطلوب دفعه والمتبقي للجهاز، وبطاقة لكل قطعة من مخطط المدينة.',
+  openGraph: { title: 'تِلاد · أراضي القادسية والأمل', description: 'أراضي القادسية والأمل في العبور الجديدة بالسعر الكلي والمطلوب دفعه والمتبقي.', locale: 'ar_EG', siteName: 'تِلاد', type: 'website',
+    images: [{ url: '/og.png', width: 1200, height: 630, alt: 'تِلاد · العقار قرارٌ لا صفقةٌ' }] },
+  twitter: { card: 'summary_large_image' },
 };
 
 // Pinch-zoom stays on (some in-app browsers block it unless it is stated).

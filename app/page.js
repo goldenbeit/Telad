@@ -1,8 +1,11 @@
 import Script from 'next/script';
 import Market from '@/components/Market';
+import HomeIndex from '@/components/HomeIndex';
 
 // Google Analytics 4 (25/11): on the public site only, never on /admin.
 const GA = 'G-3HWDVQZTQB';
+export const revalidate = 300;
+export const metadata = { alternates: { canonical: '/' } };
 
 export default function Home() {
   return (
@@ -10,6 +13,7 @@ export default function Home() {
       <Script src={`https://www.googletagmanager.com/gtag/js?id=${GA}`} strategy="afterInteractive" />
       <Script id="ga" strategy="afterInteractive">{`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','${GA}');`}</Script>
       <Market />
+      <HomeIndex />
     </>
   );
 }

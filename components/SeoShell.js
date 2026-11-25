@@ -1,0 +1,37 @@
+// The frame of the SEO pages (25/11): header, breadcrumb, footer with every area. Server-rendered, no script.
+import Link from 'next/link';
+import { ZONES, SITE, WA, waLink } from '@/lib/public-data';
+
+export function JsonLd({ data }) {
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }} />;
+}
+
+export function crumbsLd(items) {
+  return { '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+    itemListElement: items.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: SITE + (c.href || '') })) };
+}
+
+export default function SeoShell({ crumbs = [], children }) {
+  return (
+    <div className="sx">
+      <header className="sx-top"><Link href="/" className="sx-brand">تِلاد</Link><span className="sx-tag">العقار قرارٌ لا صفقةٌ</span></header>
+      {crumbs.length > 0 && (
+        <nav className="sx-bc" aria-label="مكانك">
+          {crumbs.map((c, i) => (
+            <span key={i}>{i > 0 && <span className="sx-sep">›</span>}{c.href && i < crumbs.length - 1 ? <Link href={c.href}>{c.name}</Link> : <span>{c.name}</span>}</span>
+          ))}
+        </nav>
+      )}
+      <main className="sx-main">{children}</main>
+      <footer className="sx-foot">
+        {ZONES.map((z) => (
+          <div key={z.slug}>
+            <Link href={`/${z.slug}`} className="sx-fz">أراضي {z.name}</Link>
+            <div className="sx-fd">{z.districts.map((d) => <Link key={d} href={`/${z.slug}/${d}`}>الحي {d}</Link>)}<Link href={`/${z.slug}/unallocated`}>غير مخصصة</Link></div>
+          </div>
+        ))}
+        <div className="sx-fl"><Link href="/">كل القطع على تِلاد</Link><a href={waLink('السلام عليكم، عايز أسأل عن أراضي على تِلاد.')} target="_blank" rel="noopener">واتساب <span dir="ltr">+{WA}</span></a></div>
+      </footer>
+    </div>
+  );
+}
